@@ -1,0 +1,59 @@
+s2.assign(s1, 2, 3); :
+Cela assigne à s2 une sous-chaîne de s1 commençant à l'indice 2 et d'une longueur de 3 caractères. Donc, s2 contiendra "C" (caractères à partir de l'indice 2 dans "ABC").
+La console affichera |C|.
+
+s2.assign(s1, 3, 2); :
+Cela assigne à s2 une sous-chaîne de s1 commençant à l'indice 3 et d'une longueur de 2 caractères. Cependant, il n'y a pas suffisamment de caractères dans s1, donc s2 contiendra "C" (le caractère à partir de l'indice 3 dans "ABC").
+La console affichera ||.
+
+s3.assign("ABC", 2); :
+Cela assigne à s3 les deux premiers caractères de la chaîne "ABC". s3 contiendra "AB".
+La console affichera |AB|.
+
+s4.assign(2, 65); :
+Cela assigne à s4 deux caractères avec la valeur ASCII 65, qui est "A". Donc, s4 contiendra "AA".
+La console affichera |AA|.
+
+s5.assign(4, '\101'); :
+Cela assigne à s5 quatre caractères avec la valeur octale '\101', qui est "A". Donc, s5 contiendra "AAAA".
+La console affichera |AAAA|.
+
+s6.assign(4, '\x42'); :
+Cela assigne à s6 quatre caractères avec la valeur hexadécimale '\x42', qui est "B". Donc, s6 contiendra "BBBB".
+La console affichera |BBBB|.
+
+string s7 = string("A") + string("BC"); :
+Cela concatène deux chaînes pour créer s7. s7 contiendra "ABC".
+La console affichera |ABC|.
+
+string s8 = string("A") + "BC"; :
+Cela concatène une chaîne littérale avec une chaîne pour créer s8. s8 contiendra "ABC".
+La console affichera |ABC|.
+
+string s9 = 'A' + string("BC"); :
+Cela concatène un caractère avec une chaîne pour créer s9. s9 contiendra "ABC".
+La console affichera |ABC|.
+
+string s10 = "A" + "BC"; :
+Cela concatène deux chaînes littérales pour créer s10. s10 contiendra "ABC".
+La console affichera |ABC|.
+
+string s11 = "AB"; s11 += 'C'; :
+Cela concatène un caractère à la chaîne s11. s11 contiendra "ABC".
+La console affichera |ABC|.
+
+string s12 = ""; s2 = "123"; s12.append(s2); :
+Cela assigne la valeur de s2 à s12 en utilisant append. s12 contiendra "123".
+La console affichera |123|.
+
+string s13 = ""; s2 = "123"; s13.append(s2, 1, 3); :
+Cela assigne à s13 une sous-chaîne de s2 commençant à l'indice 1 et d'une longueur de 3 caractères. Cependant, s2 ne contient pas suffisamment de caractères, donc s13 contiendra "23" (les caractères à partir de l'indice 1 de "123").
+La console affichera |23|.
+
+string s14; s14.append("123", 2); :
+Cela assigne à s14 les deux premiers caractères de la chaîne "123". s14 contiendra "12".
+La console affichera |12|.
+
+string s15; s15.append(2, '2'); :
+Cela assigne à s15 deux caractères '2'. s15 contiendra "22".
+La console affichera |22|.

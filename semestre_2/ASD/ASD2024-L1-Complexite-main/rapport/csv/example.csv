@@ -1,0 +1,89 @@
+Tri;type de vector;Nombre d'éléments du vector;Comparaisons;Affectations;Temps;;;;Tri;type de vector;Nombre d'éléments du vector;Comparaisons;Affectations;Temps
+Tri à Bulles;(Sorted);100;99;0;2.7e-06;;;;Tri à Bulles;(Sorted);100;99;0;2.7e-06
+Tri à Bulles;(Descending);100;4950;14850;0.0001814;;;;Tri à Bulles;(Descending);100;4950;14850;0.0001814
+Tri à Bulles;(Random Distinct);100;4950;7383;0.0001402;;;;Tri à Bulles;(Random Distinct);100;4950;7383;0.0001402
+Tri à Bulles;(Almost Sorted);100;294;105;6.4e-06;;;;Tri à Bulles;(Almost Sorted);100;294;105;6.4e-06
+Tri par sélection;(Sorted);100;4950;297;6.88e-05;;;;Tri à Bulles;(Sorted);500;499;0;6.3e-06
+Tri par sélection;(Descending);100;4950;297;7.52e-05;;;;Tri à Bulles;(Descending);500;124750;374250;0.0036428
+Tri par sélection;(Random Distinct);100;4950;297;7.32e-05;;;;Tri à Bulles;(Random Distinct);500;124750;189555;0.0027044
+Tri par sélection;(Almost Sorted);100;4950;297;6.64e-05;;;;Tri à Bulles;(Almost Sorted);500;1990;645;3.2e-05
+Tri par insertion;(Sorted);100;99;198;6.3e-06;;;;Tri à Bulles;(Sorted);1000;999;0;7.3e-06
+Tri par insertion;(Descending);100;4950;5148;0.0001032;;;;Tri à Bulles;(Descending);1000;499500;1498500;0.014662
+Tri par insertion;(Random Distinct);100;2554;2659;6.27e-05;;;;Tri à Bulles;(Random Distinct);1000;499175;763875;0.0105875
+Tri par insertion;(Almost Sorted);100;134;233;8.9e-06;;;;Tri à Bulles;(Almost Sorted);1000;3990;1281;4.9e-05
+sortFunction;(Sorted);100;629;328;1.72e-05;;;;Tri à Bulles;(Sorted);5000;4999;0;7.26e-05
+sortFunction;(Descending);100;526;458;1.43e-05;;;;Tri à Bulles;(Descending);5000;12497500;37492500;0.430873
+sortFunction;(Random Distinct);100;815;661;2.39e-05;;;;Tri à Bulles;(Random Distinct);5000;12495730;18774837;0.29777
+sortFunction;(Almost Sorted);100;556;357;1.52e-05;;;;Tri à Bulles;(Almost Sorted);5000;19990;6012;0.0002095
+sortStableFunction;(Sorted);100;386;719;1.97e-05;;;;Tri à Bulles;(Sorted);10000;9999;0;0.0001525
+sortStableFunction;(Descending);100;266;1063;2.24e-05;;;;Tri à Bulles;(Descending);10000;49995000;149985000;1.58848
+sortStableFunction;(Random Distinct);100;620;918;2.92e-05;;;;Tri à Bulles;(Random Distinct);10000;49984704;74751891;1.18027
+sortStableFunction;(Almost Sorted);100;409;750;1.89e-05;;;;Tri à Bulles;(Almost Sorted);10000;39990;12162;0.0004456
+Tri à Bulles;(Sorted);500;499;0;6.3e-06;;;;;;;;;
+Tri à Bulles;(Descending);500;124750;374250;0.0036428;;;;Tri par sélection;(Sorted);100;4950;297;6.88e-05
+Tri à Bulles;(Random Distinct);500;124750;189555;0.0027044;;;;Tri par sélection;(Descending);100;4950;297;7.52e-05
+Tri à Bulles;(Almost Sorted);500;1990;645;3.2e-05;;;;Tri par sélection;(Random Distinct);100;4950;297;7.32e-05
+Tri par sélection;(Sorted);500;124750;1497;0.0022037;;;;Tri par sélection;(Almost Sorted);100;4950;297;6.64e-05
+Tri par sélection;(Descending);500;124750;1497;0.0012322;;;;Tri par sélection;(Sorted);500;124750;1497;0.0022037
+Tri par sélection;(Random Distinct);500;124750;1497;0.0011821;;;;Tri par sélection;(Descending);500;124750;1497;0.0012322
+Tri par sélection;(Almost Sorted);500;124750;1497;0.002227;;;;Tri par sélection;(Random Distinct);500;124750;1497;0.0011821
+Tri par insertion;(Sorted);500;499;998;2.52e-05;;;;Tri par sélection;(Almost Sorted);500;124750;1497;0.002227
+Tri par insertion;(Descending);500;124750;125748;0.0026282;;;;Tri par sélection;(Sorted);1000;499500;2997;0.0044973
+Tri par insertion;(Random Distinct);500;63675;64183;0.001652;;;;Tri par sélection;(Descending);1000;499500;2997;0.0050807
+Tri par insertion;(Almost Sorted);500;714;1213;4.12e-05;;;;Tri par sélection;(Random Distinct);1000;499500;2997;0.0050098
+sortFunction;(Sorted);500;4571;1640;8.88e-05;;;;Tri par sélection;(Almost Sorted);1000;499500;2997;0.004192
+sortFunction;(Descending);500;3574;2306;7.91e-05;;;;Tri par sélection;(Sorted);5000;12497500;14997;0.119147
+sortFunction;(Random Distinct);500;5390;4387;0.0001484;;;;Tri par sélection;(Descending);5000;12497500;14997;0.123647
+sortFunction;(Almost Sorted);500;4644;1928;9.81e-05;;;;Tri par sélection;(Random Distinct);5000;12497500;14997;0.14842
+sortStableFunction;(Sorted);500;2730;4607;8.36e-05;;;;Tri par sélection;(Almost Sorted);5000;12497500;14997;0.115038
+sortStableFunction;(Descending);500;1898;6347;0.0001168;;;;;;;;;
+sortStableFunction;(Random Distinct);500;4382;5581;0.0001319;;;;Tri par insertion;(Sorted);100;99;198;6.3e-06
+sortStableFunction;(Almost Sorted);500;2877;4787;9.06e-05;;;;Tri par insertion;(Descending);100;4950;5148;0.0001032
+Tri à Bulles;(Sorted);1000;999;0;7.3e-06;;;;Tri par insertion;(Random Distinct);100;2554;2659;6.27e-05
+Tri à Bulles;(Descending);1000;499500;1498500;0.014662;;;;Tri par insertion;(Almost Sorted);100;134;233;8.9e-06
+Tri à Bulles;(Random Distinct);1000;499175;763875;0.0105875;;;;Tri par insertion;(Sorted);500;499;998;2.52e-05
+Tri à Bulles;(Almost Sorted);1000;3990;1281;4.9e-05;;;;Tri par insertion;(Descending);500;124750;125748;0.0026282
+Tri par sélection;(Sorted);1000;499500;2997;0.0044973;;;;Tri par insertion;(Random Distinct);500;63675;64183;0.001652
+Tri par sélection;(Descending);1000;499500;2997;0.0050807;;;;Tri par insertion;(Almost Sorted);500;714;1213;4.12e-05
+Tri par sélection;(Random Distinct);1000;499500;2997;0.0050098;;;;Tri par insertion;(Sorted);1000;999;1998;4.85e-05
+Tri par sélection;(Almost Sorted);1000;499500;2997;0.004192;;;;Tri par insertion;(Descending);1000;499500;501498;0.010405
+Tri par insertion;(Sorted);1000;999;1998;4.85e-05;;;;Tri par insertion;(Random Distinct);1000;255616;256623;0.004766
+Tri par insertion;(Descending);1000;499500;501498;0.010405;;;;Tri par insertion;(Almost Sorted);1000;1426;2425;9.01e-05
+Tri par insertion;(Random Distinct);1000;255616;256623;0.004766;;;;Tri par insertion;(Sorted);5000;4999;9998;0.0002356
+Tri par insertion;(Almost Sorted);1000;1426;2425;9.01e-05;;;;Tri par insertion;(Descending);5000;12497500;12507498;0.197906
+sortFunction;(Sorted);1000;10621;3288;0.0001862;;;;Tri par insertion;(Random Distinct);5000;6263268;6268277;0.123778
+sortFunction;(Descending);1000;8138;4620;0.0001555;;;;Tri par insertion;(Almost Sorted);5000;7003;12002;0.0003835
+sortFunction;(Random Distinct);1000;11877;9727;0.0002965;;;;;;;;;
+sortFunction;(Almost Sorted);1000;9715;3803;0.0001685;;;;sortFunction;(Sorted);100;629;328;1.72e-05
+sortStableFunction;(Sorted);1000;5964;11213;0.000221;;;;sortFunction;(Descending);100;526;458;1.43e-05
+sortStableFunction;(Descending);1000;4292;14701;0.0002752;;;;sortFunction;(Random Distinct);100;815;661;2.39e-05
+sortStableFunction;(Random Distinct);1000;9717;13199;0.0002683;;;;sortFunction;(Almost Sorted);100;556;357;1.52e-05
+sortStableFunction;(Almost Sorted);1000;6250;11547;0.000248;;;;sortFunction;(Sorted);500;4571;1640;8.88e-05
+Tri à Bulles;(Sorted);5000;4999;0;7.26e-05;;;;sortFunction;(Descending);500;3574;2306;7.91e-05
+Tri à Bulles;(Descending);5000;12497500;37492500;0.430873;;;;sortFunction;(Random Distinct);500;5390;4387;0.0001484
+Tri à Bulles;(Random Distinct);5000;12495730;18774837;0.29777;;;;sortFunction;(Almost Sorted);500;4644;1928;9.81e-05
+Tri à Bulles;(Almost Sorted);5000;19990;6012;0.0002095;;;;sortFunction;(Sorted);1000;10621;3288;0.0001862
+Tri par sélection;(Sorted);5000;12497500;14997;0.119147;;;;sortFunction;(Descending);1000;8138;4620;0.0001555
+Tri par sélection;(Descending);5000;12497500;14997;0.123647;;;;sortFunction;(Random Distinct);1000;11877;9727;0.0002965
+Tri par sélection;(Random Distinct);5000;12497500;14997;0.14842;;;;sortFunction;(Almost Sorted);1000;9715;3803;0.0001685
+Tri par sélection;(Almost Sorted);5000;12497500;14997;0.115038;;;;sortFunction;(Sorted);5000;75861;17432;0.0012415
+Tri par insertion;(Sorted);5000;4999;9998;0.0002356;;;;sortFunction;(Descending);5000;56034;23516;0.0009291
+Tri par insertion;(Descending);5000;12497500;12507498;0.197906;;;;sortFunction;(Random Distinct);5000;74783;55409;0.0022071
+Tri par insertion;(Random Distinct);5000;6263268;6268277;0.123778;;;;sortFunction;(Almost Sorted);5000;68884;18796;0.0007373
+Tri par insertion;(Almost Sorted);5000;7003;12002;0.0003835;;;;;;;;;
+sortFunction;(Sorted);5000;75861;17432;0.0012415;;;;sortStableFunction;(Sorted);100;386;719;1.97e-05
+sortFunction;(Descending);5000;56034;23516;0.0009291;;;;sortStableFunction;(Descending);100;266;1063;2.24e-05
+sortFunction;(Random Distinct);5000;74783;55409;0.0022071;;;;sortStableFunction;(Random Distinct);100;620;918;2.92e-05
+sortFunction;(Almost Sorted);5000;68884;18796;0.0007373;;;;sortStableFunction;(Almost Sorted);100;409;750;1.89e-05
+sortStableFunction;(Sorted);5000;34266;66069;0.0008131;;;;sortStableFunction;(Sorted);500;2730;4607;8.36e-05
+sortStableFunction;(Descending);5000;27010;83563;0.0009898;;;;sortStableFunction;(Descending);500;1898;6347;0.0001168
+sortStableFunction;(Random Distinct);5000;58791;76019;0.0023803;;;;sortStableFunction;(Random Distinct);500;4382;5581;0.0001319
+sortStableFunction;(Almost Sorted);5000;35677;67626;0.0013264;;;;sortStableFunction;(Almost Sorted);500;2877;4787;9.06e-05
+Tri à Bulles;(Sorted);10000;9999;0;0.0001525;;;;sortStableFunction;(Sorted);1000;5964;11213;0.000221
+Tri à Bulles;(Descending);10000;49995000;149985000;1.58848;;;;sortStableFunction;(Descending);1000;4292;14701;0.0002752
+Tri à Bulles;(Random Distinct);10000;49984704;74751891;1.18027;;;;sortStableFunction;(Random Distinct);1000;9717;13199;0.0002683
+Tri à Bulles;(Almost Sorted);10000;39990;12162;0.0004456;;;;sortStableFunction;(Almost Sorted);1000;6250;11547;0.000248
+Tri par sélection;(Sorted);10000;49995000;29997;0.515258;;;;sortStableFunction;(Sorted);5000;34266;66069;0.0008131
+;;;;;;;;;sortStableFunction;(Descending);5000;27010;83563;0.0009898
+;;;;;;;;;sortStableFunction;(Random Distinct);5000;58791;76019;0.0023803
+;;;;;;;;;sortStableFunction;(Almost Sorted);5000;35677;67626;0.0013264

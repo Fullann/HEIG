@@ -1,0 +1,26 @@
+Etudiants :
+Regenass Maxime
+Füllemann Nathan
+
+
+Labo ALU             :  4.06 / 4.0625
+Questions            :  0.47 / 0.9375
+Bonus / Malus        :   0.0 / 5.0
+
+Note finale          : 5.5
+
+
+Remarque assistant: 
+Pensez à justifier vos réponses.
+
+Gestion de negative_o: Correct, mais si vous mettez par exemple A=2 (0010) et B=15 (1111), puis que vous effectuez une soustraction non signée, il y aura un overflow. Le résultat attendu sera une valeur négative que negative_o devra signaler. N’oubliez pas que le signal negative_o peut être utlisé par d’autres circuits dépendants de l’ALU, ce qui entrainerait des erreurs en cascade.
+
+Q1: On vous demandait les cas ou l’opcode est invalide, et non les cas où il peut y avoir une erreur dans le résultat de l’opération. Vous avez répondu à çette question en Q5…
+
+Q3: Quel  raisonnement vous a poussé à faire cette modification? Il vous était demandé de justifier le développement.
+
+Q4: Correct. Il était possible de simplifier l’équation. En effet, la sortie est à 1 seulement lorsqu’un seul bit est à 1… C’est un XOR sur 4 bits. Vous auriez pu simplifier votre équation grâce  à l’algèbre de bool.
+
+Q5: On vous demandait les cas ou l’opération sélectionnée par l’opcode est une opération gérée par l’ALU mais que le résultat de celle-ci est invalide, et donc doit faire lever erreur_o à 1,  et non les cas où l’opération n’est pas gérée.  Vous avez répondu à çette question en Q1…
+
+Q6: L’opération utilisée pour générer les valeurs des bits utilisés dans la comparaison est une soustraction signée (bit opcode [2:3] = 10 dans opcode 011011). Au vu des valeurs de A et de B, un overflow aura bien lieu (ovr=1). Faites attention, dans cet ALU, toutes les opérations sont effectuées, nous ne faisons que sélectionner la sortie du bloc que nous voulons comme résultat. La sortie erreur devrait être à 0 car l’opération demandée (comparaison) ne génère aucune erreur.

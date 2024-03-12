@@ -1,0 +1,34 @@
+Etudiants :
+Regenass Maxime
+Füllemann Nathan
+
+
+Conception du circuit             :  1.67 / 3.0
+......Registre à décalage 8 bits  :     1 / 1.       Poids : 2.0
+......Timer 28 bits               :   0.5 / 1.       Poids : 2.0
+......Contrôle Chenillard_TOP     :     0 / 1.       Poids : 3.0
+......Validation sur carte        :     1 / 1.       Poids : 2.0
+
+Questions théoriques              :  1.06 / 2.0
+......Question 1                  :     1 / 1.       Poids : 0.5
+......Question 2                  :     1 / 1.       Poids : 0.5
+......Question 3 + 4 Chronogramme :  0.75 / 1.       Poids : 3.0
+......Question 5                  :     1 / 1.       Poids : 1.0
+......Question 6 Chronogramme     :     0 / 1.       Poids : 3.0
+
+Bonus / Malus                     :   0.0 / 5.0
+
+
+Note finale                       : 3.7
+
+
+Remarque assistant: 
+Même laboratoire qu'un étudiant de l'année dernière pour le contrôle
+
+Le timer compte un coup de clock de trop
+
+Q3: mettre en évidence?
+
+Q3: reset?
+
+Q6: on ne voit rien sur votre chronogramme et on ne sait pas ce que vous voulez montrer

@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build_task",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "main.c",
+                //add more files here if necessary (one per line))
+                "-g",
+                "-o",
+                "main",
+                "-Wall"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": "$gcc",
+            "options": {
+                "cwd": "${workspaceFolder}/simple_debug"
+            }
+        }
+        //add new task here
+    ]
+}

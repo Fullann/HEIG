@@ -1,0 +1,15 @@
+Etudiants :
+Füllemann Nathan
+Regenass Maxime
+
+
+Labo Add/Sub         :   2.0 / 2.0
+Labo Checksum        :   2.0 / 2.0
+Questions            :   1.0 / 1.0
+Bonus / Malus        :   0.0 / 5.0
+
+Note finale          : 6
+
+
+Remarque assistant: 
+Faites attention aux connexions sur vos circuits, notamment sur les entrées des éléments dans le Checksum. Logisim peut causer problème si l'entrée n'est pas reliée proprement (proprement = ne pas avoir de "boule" de connexion sur l'entrée).
