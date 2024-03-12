@@ -1,0 +1,20 @@
+- Les codes d’instructions correspondent-ils ?
+On peut voir que dans le 8b les adresses sont coupée a seulement deux caractéres alors que dans le 16b elles sont sur quatre caractères
+
+- Quelle taille de ROM semble le plus adaptée ?
+La 16b car comme ceci on ne tronque pas les adresses
+
+- Observer la différence entre la valeur de l’adresse avec la vision depuis le processeur et depuis la
+mémoire. Quelle opération est faite entre ces 2 valeurs ?
+A chaque coup de clock le processeur augment de 1 et la valeur de la mémoire elle augmente uniquement une fois sur deux. De plus les adresse mémoire bouge en meme temps que la mémoire augmente
+
+- Ceci a-t-il un lien avec l’incrément du PC ? Si oui, qu’elle doit être la valeur de l’incrément ?
+Elle devrait etre de deux
+
+- Le programme fonctionne-t-il correctement ?
+Non car on passe a l instruction suivante uniquement une fois sur deux
+
+- Le programme fonctionne-t-il correctement ? Quelle taille de ROM est le plus adapté à notre processeur ?
+Oui il fonctionne normalement a chaque coup de clock il change d'instruction.
+
+
