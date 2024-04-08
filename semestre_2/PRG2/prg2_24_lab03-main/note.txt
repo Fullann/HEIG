@@ -1,0 +1,20 @@
+Etudiants :
+Regenass Maxime
+Füllemann Nathan
+
+
+Exercice 1           :  1.43 / 1.5
+Exercice 2           :   1.0 / 1.0
+Exercice 3           :  1.99 / 2.5
+Bonus / Malus        :   0.0 / 5.0
+
+Note finale          : 5.4
+
+
+Remarque assistant: 
+Exercice 1:
+- Préférez l'utilisation de define plutôt que de const (pour les types simples (int, char, double, ...)), il aurait été possible de les utiliser dans le switch/case
+
+Exercice 3:
+- Les erreurs (tableau vide/plein) devait être affichée par la fonction principale
+- Les ... dans les exemples étaient pour réduire la taille du dit exemple en ne répétant pas le menu à chaque fois.

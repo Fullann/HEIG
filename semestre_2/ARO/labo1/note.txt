@@ -1,0 +1,20 @@
+Etudiants :
+Füllemann Nathan
+
+
+Conception labo 01   :  4.64 / 5.0
+Bonus / Malus        :   0.0 / 5.0
+
+Note finale          : 5.6
+
+
+Remarque assistant: 
+Commentaires :
+- Calcul des addresses de saut (processeur_ARO2) :
+    - Vos additionneurs ont l'entrée cin non-connectée, il faut toujours connecter toutes les entrées des composants.
+
+- Ajouter et connecter le condition tester (fetch) :
+    - La porte AND sur l'entrée cond_en_i du condition_tester n'est pas nécéssaire. Le mux avec fetch_en en sélecteur est le plus prioritaire et va déja empecher de prendre l'addresse de saut si l'enable est à '0' peut importe la valeur sortant du condition tester.
+
+- Décodage instruction saut conditionnel (processeur_ARO2) :
+    - Le opcode du saut conditionnel est sur les bits 15 à 12 de instr_data (ARM7-TDMI-manual-pt3 chapitre 5.16), c'est ces bits la qu'il fallait comparer avec "D" (1101), pas les bits 15 à 8
