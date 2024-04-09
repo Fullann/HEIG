@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project integrity="7ed1bf8620430077b5094d22effd4c84da6a6460" source="2.16.8.t" version="1.0">
+<project integrity="120c0693fb97a4b345a626599aaabd3f549c7530" source="2.16.8.t" version="1.0">
 This file is intended to be loaded by Logisim-evolution (https://github.com/reds-heig/logisim-evolution).
 <lib desc="#Wiring" name="0">
     <tool name="Splitter">
@@ -2272,8 +2272,8 @@ end TCL_Generic;
     <a name="circuitnamedbox" val="true"/>
     <a name="circuitvhdlpath" val=""/>
     <wire from="(1260,900)" to="(1260,920)"/>
-    <wire from="(590,350)" to="(780,350)"/>
     <wire from="(280,680)" to="(280,690)"/>
+    <wire from="(740,350)" to="(780,350)"/>
     <wire from="(760,670)" to="(1440,670)"/>
     <wire from="(810,860)" to="(850,860)"/>
     <wire from="(550,870)" to="(550,900)"/>
@@ -2285,6 +2285,7 @@ end TCL_Generic;
     <wire from="(780,590)" to="(1440,590)"/>
     <wire from="(1160,940)" to="(1240,940)"/>
     <wire from="(590,470)" to="(740,470)"/>
+    <wire from="(590,350)" to="(740,350)"/>
     <wire from="(500,840)" to="(530,840)"/>
     <wire from="(480,860)" to="(510,860)"/>
     <wire from="(250,670)" to="(280,670)"/>
@@ -2349,6 +2350,7 @@ end TCL_Generic;
     <wire from="(280,660)" to="(280,670)"/>
     <wire from="(270,690)" to="(270,710)"/>
     <wire from="(810,840)" to="(850,840)"/>
+    <wire from="(740,320)" to="(740,350)"/>
     <wire from="(200,110)" to="(240,110)"/>
     <wire from="(520,860)" to="(520,880)"/>
     <wire from="(880,850)" to="(900,850)"/>
@@ -2895,6 +2897,10 @@ end TCL_Generic;
       <a name="label" val="decode_control_bus_s"/>
     </comp>
     <comp lib="0" loc="(790,340)" name="Probe">
+      <a name="facing" val="south"/>
+      <a name="radix" val="16"/>
+    </comp>
+    <comp lib="0" loc="(740,320)" name="Probe">
       <a name="facing" val="south"/>
       <a name="radix" val="16"/>
     </comp>
