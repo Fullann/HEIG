@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project integrity="7bc7845ca4d3a8d1d37d78e8a74b746ad70e6074" source="2.16.8.t" version="1.0">
+<project integrity="7ed1bf8620430077b5094d22effd4c84da6a6460" source="2.16.8.t" version="1.0">
 This file is intended to be loaded by Logisim-evolution (https://github.com/reds-heig/logisim-evolution).
 <lib desc="#Wiring" name="0">
     <tool name="Splitter">
@@ -1534,9 +1534,9 @@ end TCL_Generic;
     <wire from="(610,120)" to="(730,120)"/>
     <wire from="(580,240)" to="(580,250)"/>
     <wire from="(580,680)" to="(580,690)"/>
-    <wire from="(580,650)" to="(580,660)"/>
     <wire from="(830,690)" to="(830,700)"/>
     <wire from="(510,260)" to="(560,260)"/>
+    <wire from="(580,600)" to="(620,600)"/>
     <wire from="(810,710)" to="(810,740)"/>
     <wire from="(810,740)" to="(850,740)"/>
     <wire from="(810,680)" to="(850,680)"/>
@@ -1561,6 +1561,7 @@ end TCL_Generic;
     <wire from="(600,270)" to="(630,270)"/>
     <wire from="(820,720)" to="(850,720)"/>
     <wire from="(1060,640)" to="(1090,640)"/>
+    <wire from="(580,600)" to="(580,660)"/>
     <wire from="(780,640)" to="(850,640)"/>
     <wire from="(780,660)" to="(850,660)"/>
     <wire from="(870,580)" to="(1010,580)"/>
@@ -1577,7 +1578,6 @@ end TCL_Generic;
     <wire from="(570,660)" to="(580,660)"/>
     <wire from="(550,280)" to="(560,280)"/>
     <wire from="(600,340)" to="(610,340)"/>
-    <wire from="(580,650)" to="(590,650)"/>
     <comp lib="0" loc="(1160,200)" name="Pin">
       <a name="facing" val="west"/>
       <a name="output" val="true"/>
@@ -1936,7 +1936,7 @@ end TCL_Generic;
       <a name="width" val="4"/>
       <a name="label" val="cond_s"/>
     </comp>
-    <comp lib="0" loc="(590,650)" name="Tunnel">
+    <comp lib="0" loc="(620,600)" name="Tunnel">
       <a name="label" val="sel_PC_s"/>
     </comp>
     <comp lib="7" loc="(4,50)" name="Text" trackercomp="true">
@@ -5958,7 +5958,7 @@ end TCL_Generic;
     </comp>
     <comp lib="0" loc="(620,120)" name="Constant">
       <a name="width" val="6"/>
-      <a name="value" val="0x2a"/>
+      <a name="value" val="0x15"/>
     </comp>
     <comp lib="0" loc="(720,160)" name="Tunnel">
       <a name="label" val="ldrb_r_r_r"/>
@@ -5981,7 +5981,7 @@ end TCL_Generic;
     </comp>
     <comp lib="0" loc="(620,220)" name="Constant">
       <a name="width" val="6"/>
-      <a name="value" val="0x29"/>
+      <a name="value" val="0x14"/>
     </comp>
     <comp lib="0" loc="(610,410)" name="Splitter">
       <a name="fanout" val="1"/>
@@ -6091,7 +6091,7 @@ end TCL_Generic;
     </comp>
     <comp lib="0" loc="(610,270)" name="Constant">
       <a name="width" val="6"/>
-      <a name="value" val="0x2d"/>
+      <a name="value" val="0x16"/>
     </comp>
     <comp lib="0" loc="(600,360)" name="Splitter">
       <a name="fanout" val="1"/>
@@ -6269,7 +6269,7 @@ end TCL_Generic;
     </comp>
     <comp lib="0" loc="(620,170)" name="Constant">
       <a name="width" val="6"/>
-      <a name="value" val="0x2e"/>
+      <a name="value" val="0x17"/>
     </comp>
     <comp lib="3" loc="(670,360)" name="Comparator">
       <a name="width" val="5"/>
