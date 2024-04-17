@@ -1,0 +1,17 @@
+Etudiants :
+Regenass Maxime
+Füllemann Nathan
+
+
+Lab04                :  3.92 / 5.0
+Bonus / Malus        :   0.0 / 5.0
+
+Note finale          : 4.9
+
+
+Remarque assistant: 
+ - Il était demandé un tableau unidimensionnel pour les notes, donc juste `float *` et pas `float ***`. De plus, le troisième niveau de pointeur n'est pas utile. 
+ - Le programme ne quitte pas en cas de problème d'allocation dans `addSubject`
+ - La mémoire déjà allouée n'est pas libérée en cas d'erreur lors de l'initialisation dans `main`
+ - Le `char *` contenant les noms devaient avoir la même taille que le nom + `\0`
+ - Les messages d'erreurs devait être affiché en dehors des différentes fonctions de gestion
