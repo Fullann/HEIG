@@ -1,0 +1,79 @@
+
+main.o:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000068  00000000  00000000  00000034  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00000000  00000000  0000009c  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000000  00000000  00000000  0000009c  2**0
+                  ALLOC
+  3 .ARM.attributes 00000014  00000000  00000000  0000009c  2**0
+                  CONTENTS, READONLY
+
+Disassembly of section .text:
+
+00000000 <START>:
+   0:	200f      	movs	r0, #15
+   2:	211a      	movs	r1, #26
+   4:	2305      	movs	r3, #5
+   6:	3011      	adds	r0, #17
+   8:	18c2      	adds	r2, r0, r3
+   a:	3201      	adds	r2, #1
+   c:	1a8b      	subs	r3, r1, r2
+   e:	1e8c      	subs	r4, r1, #2
+  10:	391d      	subs	r1, #29
+
+00000012 <STEP_1>:
+  12:	2104      	movs	r1, #4
+  14:	8103      	strh	r3, [r0, #8]
+  16:	4301      	orrs	r1, r0
+  18:	8902      	ldrh	r2, [r0, #8]
+
+0000001a <STEP_2>:
+  1a:	708a      	strb	r2, [r1, #2]
+  1c:	7888      	ldrb	r0, [r1, #2]
+
+0000001e <STEP_3>:
+  1e:	5444      	strb	r4, [r0, r1]
+  20:	5c42      	ldrb	r2, [r0, r1]
+
+00000022 <STEP_4>:
+  22:	5243      	strh	r3, [r0, r1]
+  24:	5a44      	ldrh	r4, [r0, r1]
+  26:	4010      	ands	r0, r2
+  28:	0080      	lsls	r0, r0, #2
+  2a:	08c0      	lsrs	r0, r0, #3
+
+0000002c <STEP_5>:
+  2c:	4310      	orrs	r0, r2
+  2e:	4244      	negs	r4, r0
+  30:	405c      	eors	r4, r3
+  32:	2002      	movs	r0, #2
+  34:	41c2      	rors	r2, r0
+  36:	43da      	mvns	r2, r3
+
+00000038 <STEP_6>:
+  38:	4102      	asrs	r2, r0
+  3a:	109a      	asrs	r2, r3, #2
+
+0000003c <STEP_7>:
+  3c:	2000      	movs	r0, #0
+  3e:	2100      	movs	r1, #0
+  40:	1842      	adds	r2, r0, r1
+  42:	d000      	beq.n	46 <STEP_8>
+  44:	200c      	movs	r0, #12
+
+00000046 <STEP_8>:
+  46:	e00b      	b.n	60 <STEP_10>
+
+00000048 <STEP_9>:
+  48:	2100      	movs	r1, #0
+	...
+
+00000060 <STEP_10>:
+  60:	202a      	movs	r0, #42	; 0x2a
+  62:	213c      	movs	r1, #60	; 0x3c
+  64:	46c0      	nop			; (mov r8, r8)
+  66:	46c0      	nop			; (mov r8, r8)
