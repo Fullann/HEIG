@@ -1,0 +1,25 @@
+Etudiants :
+Regenass Maxime
+Füllemann Nathan
+
+
+Bataille navale      :  2.15 / 2.5
+Jeu du pendu         :  1.65 / 2.5
+Bonus / Malus        :   0.0 / 5.0
+
+Note finale          : 4.8
+
+
+Remarque assistant: 
+Exercice 1:
+- Nombre magique (masque, position des différentes données, ...)
+- (Il serait préférable de "construire" les masques "compliqués" à l'aide d'opération binaire (`<<`, `~`, ...))
+- Pas de vérification de l'entrée utilisateur, il est possible d'entré des valeurs plus grande que 11
+- `temp_life` et `temp_ship` ne pouvait être utilisé que pour faire `--` et `++`, pas pour l'affichage ou la condition de fin de jeu
+
+Exercice 2:
+- Nombre magique
+- `strlen` ne devrait pas être appelée dans la condition d'une boucle, car elle va être appelée à chaque itération. Il faut passer par une variable initialisée avant la boucle
+- Le nombre d'occurence de la lette n'est pas affichée
+- L'argument `--lifes` n'est pas pris en compte correctement dans le cours de la partie
+- `isalpha` ne vérifie qu'un seul caractères, il faut faire un boucle pour s'assurer qu'un mot complet ne contient que des lettres

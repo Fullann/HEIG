@@ -1,0 +1,33 @@
+Etudiants :
+Füllemann Nathan
+
+
+1. BANK REGISTER     :  1.42 / 1.5
+2. DECODE            :  1.71 / 2.0
+3. EXECUTE           :   0.5 / 0.5
+5. Test              :  0.38 / 1.0
+Bonus / Malus        :   0.0 / 5.0
+
+Note finale          : 5
+
+
+Remarque assistant: 
+Commentaires :
+
+Banque des registre :
+    - Gestion du link register
+        - Il fallait mettre link_en_s AND reg_bank_en_s sur l'entrée link_en_i du bloc LR_manager, vous avez mis que link_en_s
+
+Decode :
+    - Décodage des instructions (opcode_supported_unit)
+        - Pour strb_r_r_r, ldrb_r_r_r, strh_r_r_r et ldrh_r_r_r il fallait prendre les bits 15-9 de l'instruction, pas les bits 15-10, votre décodage ne marche pas
+        - pour stb_r_r_imm il fallait comparer avec 0E, pas 1E
+
+    - Implémentation du reg_bank_control_bus (reg_bank_control_unit)
+        - La détection des valeurs à 0 ne fonctionne pas si il y a une instruction NOP, il fallait prendre votre autre porte OR qui est juste
+
+Execute :
+    - OK
+
+Test du circuit :
+    - Le but de remplir les tableaux avec les valeurs obtenues de votre circuit était de voir qu'il fonctionne bien ou de voir que justement il ne fonctionne pas et de le débugger. Dans votre cas on voit par exemple assez facilement que pour la step 3 aucune instruction n'est  active => il doit y avoir un problème au décodage.
