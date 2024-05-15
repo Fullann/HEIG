@@ -1,0 +1,29 @@
+<H1>Evaluation d'expressions arithmétiques - construction et parcours d'un arbre </H1>
+
+<P> Vous devez mettre en oeuvre la classe
+    <CODE>Expression</CODE> pour représenter une expression arithmétique.</P>
+
+<P>Les expressions valides sont de type <CODE>( lhs op rhs )</CODE> où lhs et rhs sont soit des
+    nombres positifs, soit des expressions valides, et op peut être l'un des 5 opérateurs suivants: <CODE>+, -, *, /, ^</CODE>
+    avec <code>a ^ b</code> qui vaut a à la puissance b</P>
+
+<P> La classe <CODE>Expression</CODE> représente un noeud d'un arbre binaire. Si ce noeud est une feuille, il
+    stocke une valeur numérique dans son attribut <code>valeur</code>. Si ce noeud est interne, il
+    stocke dans ses attributs <code>lhs</code> et <code>rhs</code> des pointeurs vers les noeuds des
+    opérandes gauche et droite, et dans sont attribut <code>op</code> l'opérateur à appliquer. </P>
+
+<P> Les objets de type <CODE>Expression</CODE> sont construits en lisant une expression
+    infixe depuis un flux d'entrée. Si l'expression n'est pas valide, votre fonction doit lever une exception de type
+    bad_expression lors de sa construction.</P>
+
+<P> La classe expression doit également fournir un opérateur de conversion vers <code>double</code> qui en
+    évalue la valeur, ainsi que 3 fonctions qui la convertissent en chaines de caractère au formats polonais,
+    polonais inverse, et infixe. L'opérateur et les 3 fonctions effectuent tous un parcours en profondeur
+    de l'arbre de l'expression.
+</P>
+
+<p> Enfin, on doit pouvoir libérer toute la mémoire liée à une expression en en détruisant la racine de
+    l'arbre, les sous-expressions étant détruites récursivement par le destructeur. </p>
+
+<p>Pour simplifier les choses, dans cet exercice les symboles + et - sont toujours considérés comme des opérateurs
+    binaires et jamais comme des opérateurs unaires indiquant le signe de l'entier qui le suit.</p>

@@ -1,0 +1,56 @@
+<H1>Evaluation d'expressions arithmétiques - Algorithme utilisant 2 piles </H1>
+
+<P> Vous devez mettre en oeuvre la fonction
+    <CODE>double evalue(string const&)</CODE> qui évalue une expression arithmétique
+    dont toutes les valeurs sont réelles.</P>
+
+<P>Les expressions valides sont de type <CODE>( lhs op rhs )</CODE> où lhs et rhs sont soit des
+    valeurs numériques, soit des expressions valides, et op peut être l'un des 5 opérateurs binaires suivants: <CODE>+, -, *, /, ^</CODE>
+   ^
+
+<P>Utilisez l'algorithme à deux piles vu dans la vidéo <a href="https://youtu.be/fizs3MTNBv8">4.17 - Pile</a>.
+</P>
+
+<p>Si l'expression n'est pas valide, votre fonction doit lever une exception de type bad_expression. </p>
+
+<p>Attention, pour passer les 2 derniers tests, il faut gérer le fait que les symboles <CODE>+</CODE>
+    et <CODE>-</CODE> peuvent également être des opérateurs unaires de conservation ou de changement de signe qui
+    s'appliquent au nombre ou à l'expression qui les suit. Pour cela, il faut
+<UL>
+    <LI>
+        décider quand on le lit si un caractère <CODE>+</CODE>
+        ou <CODE>-</CODE> est un opérateur unaire ou binaire. Cela dépend de ce qui vient d'être lu
+        précédemment.
+        <UL>
+            <LI>Si <CODE>+</CODE> ou <CODE>-</CODE> suit une expression, c'est un opérateur binaire. </LI>
+            <LI>S'il suit une parenthèse ouvrante ou un opérateur, c'est un opérateur unaire.</LI>
+        </UL>
+    </LI>
+    <LI>
+        Traiter les <CODE>+</CODE> unaires en les ignorant simplement
+    </LI>
+    <LI>
+        Insérer les <CODE>-</CODE> unaires en les insérant dans la pile des opérateurs, mais avec un autre symbole
+        que le  <CODE>-</CODE> binaire pour pouvoir les distinguer.
+    </LI>
+    <LI>
+        Après chaque insertion dans la pile des valeurs, inverser la valeur au sommet tant que l'on trouve des
+        <CODE>-</CODE> unaires au sommet de la pile des opérateurs.
+    </LI>
+</UL>
+</P>
+<p>
+Enfin, considérons les expressions suivantes :
+<UL>
+    <LI> <CODE>(-2+3)</CODE> vaut 1. Il faut appliquer le - unaire en changeant le signe du sommet de la pile des
+        valeurs juste après avoir y empilé le nombre 2. </LI>
+    <LI>
+        <CODE>-(2+3)</CODE> vaut -5. Il faut appliquer le - unaire en changeant le signe du sommet de la pile des
+        valeurs après y avoir empilé la valeur 5 comme résultat de l'évalation de <CODE>(2+3)</CODE>.
+    </LI>
+</UL>
+Pour pouvoir distinguer ces 2 cas, il est nécessaire se souvenir des parenthèses ouvrantes en les plaçant dans
+la pile des opérateurs quand on les rencontre, et en les dépilant après avoir évalué une parenthèse fermante.
+Ainsi, lors de l'insertion du 2 dans la pile des valeurs, le sommet de la pile des opérateurs contient <code>'('</code>
+et l'on sait qu'il ne faut pas en changer le signe.
+</p>
