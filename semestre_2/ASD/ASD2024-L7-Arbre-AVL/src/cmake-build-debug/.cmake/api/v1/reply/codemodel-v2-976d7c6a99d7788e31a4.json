@@ -1,0 +1,88 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.15"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "catch2_tests",
+					"jsonFile" : "directory-catch2_tests-Debug-5eac3c3b0e411d31cb34.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.15"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "catch2_tests",
+					"targetIndexes" : 
+					[
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "ASD2024_L7_AVL_Tree",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "AVL-Tree::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-AVL-Tree-Debug-1eb04eb6f5f604e06d2c.json",
+					"name" : "AVL-Tree",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "AVL-tests::@e72222120aea56727254",
+					"jsonFile" : "target-AVL-tests-Debug-91cff2af433d082d46aa.json",
+					"name" : "AVL-tests",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/Users/fullann/Documents/GitHub/ASD2024-L7-Arbre-AVL/src/cmake-build-debug",
+		"source" : "/Users/fullann/Documents/GitHub/ASD2024-L7-Arbre-AVL/src"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

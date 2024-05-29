@@ -1,0 +1,6 @@
+/Users/fullann/Documents/GitHub/ASD2024-L7-Arbre-AVL/src/cmake-build-debug/CMakeFiles/AVL-Tree.dir
+/Users/fullann/Documents/GitHub/ASD2024-L7-Arbre-AVL/src/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/fullann/Documents/GitHub/ASD2024-L7-Arbre-AVL/src/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/fullann/Documents/GitHub/ASD2024-L7-Arbre-AVL/src/cmake-build-debug/catch2_tests/CMakeFiles/AVL-tests.dir
+/Users/fullann/Documents/GitHub/ASD2024-L7-Arbre-AVL/src/cmake-build-debug/catch2_tests/CMakeFiles/edit_cache.dir
+/Users/fullann/Documents/GitHub/ASD2024-L7-Arbre-AVL/src/cmake-build-debug/catch2_tests/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,31 @@
+Etudiants :
+Füllemann Nathan
+
+
+1.1 Data Hazard                                    :   2.0 / 2.0
+1.2 Commander les 3 signaux dans main_control_unit :  0.52 / 1.0
+1.2 Hazard detection                               :   1.5 / 1.5
+1.3 Test aléas de donnée                           :   0.5 / 0.5
+Bonus / Malus                                      :   0.0 / 5.0
+
+Note finale                                        : 5.5
+
+
+Remarque assistant: 
+Commentaires :
+
+Data hazard :
+    - OK
+
+Enable lecture :
+    - Reg_s_en :
+        - Mettre un not sur sel_operand_1 ne suffit pas, il faut enlever les 4 branch et les NOP qui sont compris dedans
+
+    - Reg_n_en :
+        - Prendre les instructions ou sel_operand_2 vaut "00" ne suffit pas, il faut enlever neg_r_r_s, mvn_r_r_s et les NOP qui sont compris dedans
+
+    - Reg_mem_en_s
+        - On veut lire la banque de registres uniquement lors des instructions store pas pour les load => il fallait prendre str_data_s et pas sel_mem_s
+
+Enable étages :
+    - OK, mais pas besoin d'ajouter le instr_ctl_s, on ne vous demandait pas les aléas de controles
