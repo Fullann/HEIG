@@ -1,0 +1,20 @@
+LF:  0.5 () (1:Alice,0)
+LF:  0.5 (0:Bob,1) (1:Alice,0) () ()
+LF: 0.38 (0:Bob,1) (1:Alice,0) () (3:Chiara,2) () () () ()
+LF:  0.5 (0:Bob,1) (1:Alice,0) (1:David,3) (3:Chiara,2) () () () ()
+LF: 0.62 (0:Bob,1) (1:Alice,0) (1:David,3) (3:Chiara,2) (2:Elena,4) () () ()
+LF: 0.38 () () (2:Elena,4) (3:Chiara,2) () () () () (8:Bob,1) (9:Alice,0) (10:Francis,5) () () () () ()
+LF: 0.44 () () (2:Elena,4) (3:Chiara,2) () () (6:Gertrude,6) () (8:Bob,1) (9:Alice,0) (10:Francis,5) () () () () ()
+LF:  0.5 () () (2:Elena,4) (3:Chiara,2) (4:Hector,7) () (6:Gertrude,6) () (8:Bob,1) (9:Alice,0) (10:Francis,5) () () ()
+() ()
+LF: 0.56 () () (2:Elena,4) (3:Chiara,2) (4:Hector,7) () (6:Gertrude,6) () (8:Bob,1) (9:Alice,0) (10:Francis,5) (11:Isabe
+lle,8) () () () ()
+LF: 0.56 () () (2:Elena,4) (3:Chiara,2) (4:Hector,7) () (6:Gertrude,6) () (8:Bob,1) (9:Alice,9) (10:Francis,5) (11:Isabe
+lle,8) () () () ()
+LF: 0.56 () () (2:Elena,10) (3:Chiara,2) (4:Hector,7) () (6:Gertrude,6) () (8:Bob,1) (9:Alice,9) (10:Francis,5) (11:Isab
+elle,8) () () () ()
+LF:  0.9 (0:Elena,10) (1:Chiara,2) (2:Gertrude,6) (0:Bob,1) (1:Alice,9) (3:Isabelle,8) (6:Francis,5) () (8:Hector,7) ()
+
+LF:  0.8 (0:Elena,10) (1:Chiara,2) (2:Gertrude,6) (0:Bob,1) (3:Isabelle,8) () (6:Francis,5) () (8:Hector,7) ()
+LF:  0.7 (0:Elena,10) (1:Chiara,2) (2:Gertrude,6) (0:Bob,1) (3:Isabelle,8) () (6:Francis,5) () () ()
+LF:  0.6 (0:Elena,10) (1:Chiara,2) (2:Gertrude,6) (0:Bob,1) (3:Isabelle,8) () () () () ()

@@ -1,0 +1,59 @@
+1 : NULL
+2 : (Alice,0) -> NULL
+
+1 : (Bob,1) -> NULL
+2 : (Alice,0) -> NULL
+
+1 : (Bob,1) -> NULL
+2 : (Chiara,2) -> (Alice,0) -> NULL
+
+1 : (Bob,1) -> NULL
+2 : (David,3) -> (Chiara,2) -> (Alice,0) -> NULL
+
+1 : (Elena,4) -> (Bob,1) -> NULL
+2 : (David,3) -> (Chiara,2) -> (Alice,0) -> NULL
+
+1 : (Francis,5) -> (Bob,1) -> NULL
+2 : (Alice,0) -> (David,3) -> NULL
+3 : (Elena,4) -> NULL
+4 : (Chiara,2) -> NULL
+
+1 : (Francis,5) -> (Bob,1) -> NULL
+2 : (Alice,0) -> (David,3) -> NULL
+3 : (Gertrude,6) -> (Elena,4) -> NULL
+4 : (Chiara,2) -> NULL
+
+1 : (Hector,7) -> (Francis,5) -> (Bob,1) -> NULL
+2 : (Alice,0) -> (David,3) -> NULL
+3 : (Gertrude,6) -> (Elena,4) -> NULL
+4 : (Chiara,2) -> NULL
+
+1 : (Hector,7) -> (Francis,5) -> (Bob,1) -> NULL
+2 : (Alice,0) -> (David,3) -> NULL
+3 : (Gertrude,6) -> (Elena,4) -> NULL
+4 : (Isabelle,8) -> (Chiara,2) -> NULL
+
+1 : (Hector,7) -> (Francis,5) -> (Bob,1) -> NULL
+2 : (Alice,9) -> (David,3) -> NULL
+3 : (Gertrude,6) -> (Elena,4) -> NULL
+4 : (Isabelle,8) -> (Chiara,2) -> NULL
+
+1 : (Hector,7) -> (Francis,5) -> (Bob,1) -> NULL
+2 : (Alice,9) -> (David,3) -> NULL
+3 : (Gertrude,6) -> (Elena,10) -> NULL
+4 : (Isabelle,8) -> (Chiara,2) -> NULL
+
+
+1 : (Bob,1) -> (Hector,7) -> NULL
+2 : (Isabelle,8) -> NULL
+3 : (Gertrude,6) -> (Francis,5) -> NULL
+4 : (Chiara,2) -> (David,3) -> (Alice,9) -> NULL
+5 : (Elena,10) -> NULL
+6 : NULL
+
+1 : (Bob,1) -> NULL
+2 : (Isabelle,8) -> NULL
+3 : (Gertrude,6) -> (Francis,5) -> NULL
+4 : (David,3) -> NULL
+5 : (Elena,10) -> NULL
+6 : NULL

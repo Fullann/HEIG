@@ -1,0 +1,17 @@
+Etudiants :
+Füllemann Nathan
+Regenass Maxime
+
+
+BMP                  :  1.82 / 2.0
+Compare              :   1.0 / 1.0
+Gray                 :   1.0 / 1.0
+Pepper               :   1.0 / 1.0
+Bonus / Malus        :   0.0 / 5.0
+
+Note finale          : 5.8
+
+
+Remarque assistant: 
+ - Les valeur de retour de `fread` et `fwrite` doivent également être vérifiée pour s'assurer que ça se soit bien passé
+ - Attention au nombre magique. Faite des defines pour les +0/+1/+2 qui permettent de savoir de quelle couleur il s'agit. Void mieux, faire un struct pour les pixels avec les couleurs
