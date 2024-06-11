@@ -1,16 +1,17 @@
-@ programme Q1
-mov r1,#4
-mov r2,#0x23
-mov r3,#0x9
-mov r4,#0x18
-lsl r0,r2, #4 
-orr r0,r3 
-STRH r0, [r4, #2]
-LDRH r3, [r4, #2]
-mov r1,#0x10
-sub r3,r3,r1
-nop
-nop
-nop
-nop
-nop
+@ Q3 PROGRAMME 4
+MOV R2,#0x80
+MOV R1,#0x8
+MOV R4,#0x2F
+MOV R3,#0x7
+ADD R0,#0xA
+ROR R2,R1
+SUB R4,R4,#0x5
+STRH R3,[R1,#0x8]
+LSR R3,R4,#0xA
+ORR R2,R0
+LDRH R0,[R1,#0x8]
+NOP
+NOP
+NOP
+NOP
+NOP
