@@ -1,0 +1,4 @@
+services:
+  demo-app:
+      image: dai/demo-app
+
