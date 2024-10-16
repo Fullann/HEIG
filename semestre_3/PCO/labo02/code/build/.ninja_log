@@ -1,0 +1,27 @@
+# ninja log v6
+476	505	1728976699937879476	pco_bogosort	39d795476315d8a1
+35	781	1728975832443570755	CMakeFiles/pco_bogosort.dir/src/mainwindow.cpp.o	5ce7bf6fda76148f
+215	895	1728898065709335876	CMakeFiles/pco_bogosort.dir/pco_bogosort_autogen/mocs_compilation.cpp.o	821b53f64239c407
+6	37	1728977212848903108	/Users/nathan/Documents/GitHub/PCO_Labo2/code/build/pco_bogosort_autogen/mocs_compilation.cpp	9779bf6aedc41dc0
+215	704	1728898065709980081	CMakeFiles/pco_bogosort.dir/src/threadmanager.cpp.o	daea42f7f9118064
+6	37	1728977212848903108	/Users/nathan/Documents/GitHub/PCO_Labo2/code/build/pco_bogosort_autogen/timestamp	9779bf6aedc41dc0
+215	896	1728898065709527458	CMakeFiles/pco_bogosort.dir/src/main.cpp.o	b5aee42c371c2f1e
+6	37	1728977212848903108	pco_bogosort_autogen/mocs_compilation.cpp	9779bf6aedc41dc0
+32	476	1728976699493276646	CMakeFiles/pco_bogosort.dir/src/mythread.cpp.o	40f601547444e535
+6	37	1728977212848903108	pco_bogosort_autogen/timestamp	9779bf6aedc41dc0
+6	33	1728977251107551756	pco_bogosort_autogen/timestamp	9779bf6aedc41dc0
+6	33	1728977251107551756	pco_bogosort_autogen/mocs_compilation.cpp	9779bf6aedc41dc0
+6	33	1728977251107551756	/Users/nathan/Documents/GitHub/PCO_Labo2/code/build/pco_bogosort_autogen/timestamp	9779bf6aedc41dc0
+6	33	1728977251107551756	/Users/nathan/Documents/GitHub/PCO_Labo2/code/build/pco_bogosort_autogen/mocs_compilation.cpp	9779bf6aedc41dc0
+5	31	1728977283121088924	pco_bogosort_autogen/timestamp	9779bf6aedc41dc0
+5	31	1728977283121088924	pco_bogosort_autogen/mocs_compilation.cpp	9779bf6aedc41dc0
+5	31	1728977283121088924	/Users/nathan/Documents/GitHub/PCO_Labo2/code/build/pco_bogosort_autogen/timestamp	9779bf6aedc41dc0
+5	31	1728977283121088924	/Users/nathan/Documents/GitHub/PCO_Labo2/code/build/pco_bogosort_autogen/mocs_compilation.cpp	9779bf6aedc41dc0
+31	456	1728977283147157521	CMakeFiles/pco_bogosort.dir/src/mythread.cpp.o	40f601547444e535
+456	488	1728977283571799315	pco_bogosort	39d795476315d8a1
+4	37	1729014165677744176	pco_bogosort_autogen/timestamp	9779bf6aedc41dc0
+4	37	1729014165677744176	pco_bogosort_autogen/mocs_compilation.cpp	9779bf6aedc41dc0
+4	37	1729014165677744176	/Users/nathan/Documents/GitHub/PCO_Labo2/code/build/pco_bogosort_autogen/timestamp	9779bf6aedc41dc0
+4	37	1729014165677744176	/Users/nathan/Documents/GitHub/PCO_Labo2/code/build/pco_bogosort_autogen/mocs_compilation.cpp	9779bf6aedc41dc0
+37	474	1729014165710253270	CMakeFiles/pco_bogosort.dir/src/mythread.cpp.o	40f601547444e535
+474	516	1729014166147278400	pco_bogosort	39d795476315d8a1

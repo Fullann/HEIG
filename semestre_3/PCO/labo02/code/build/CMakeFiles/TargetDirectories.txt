@@ -1,0 +1,5 @@
+/Users/nathan/Documents/GitHub/PCO_Labo2/code/build/CMakeFiles/pco_bogosort.dir
+/Users/nathan/Documents/GitHub/PCO_Labo2/code/build/CMakeFiles/edit_cache.dir
+/Users/nathan/Documents/GitHub/PCO_Labo2/code/build/CMakeFiles/rebuild_cache.dir
+/Users/nathan/Documents/GitHub/PCO_Labo2/code/build/CMakeFiles/pco_bogosort_autogen_timestamp_deps.dir
+/Users/nathan/Documents/GitHub/PCO_Labo2/code/build/CMakeFiles/pco_bogosort_autogen.dir

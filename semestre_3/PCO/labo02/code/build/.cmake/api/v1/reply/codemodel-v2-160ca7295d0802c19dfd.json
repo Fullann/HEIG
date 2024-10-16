@@ -1,0 +1,78 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "PCO_LAB02",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "pco_bogosort::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-pco_bogosort-Debug-d99514a349ec9f4843cb.json",
+					"name" : "pco_bogosort",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "pco_bogosort_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-pco_bogosort_autogen-Debug-a6fe58c5a0ddf780481c.json",
+					"name" : "pco_bogosort_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "pco_bogosort_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-pco_bogosort_autogen_timestamp_deps-Debug-12a534ab794ca2a50aa3.json",
+					"name" : "pco_bogosort_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/Users/nathan/Documents/GitHub/PCO_Labo2/code/build",
+		"source" : "/Users/nathan/Documents/GitHub/PCO_Labo2/code"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

@@ -1,0 +1,4 @@
+/home/reds/Desktop/Labos_PCO/Labo2/pco24_lab02/build-code-Desktop-Debug/CMakeFiles/pco_bogosort.dir
+/home/reds/Desktop/Labos_PCO/Labo2/pco24_lab02/build-code-Desktop-Debug/CMakeFiles/edit_cache.dir
+/home/reds/Desktop/Labos_PCO/Labo2/pco24_lab02/build-code-Desktop-Debug/CMakeFiles/rebuild_cache.dir
+/home/reds/Desktop/Labos_PCO/Labo2/pco24_lab02/build-code-Desktop-Debug/CMakeFiles/pco_bogosort_autogen.dir

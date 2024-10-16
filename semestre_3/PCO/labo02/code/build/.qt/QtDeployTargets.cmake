@@ -1,0 +1,2 @@
+set(__QT_DEPLOY_TARGET_pco_bogosort_FILE /Users/nathan/Documents/GitHub/PCO_Labo2/code/build/pco_bogosort)
+set(__QT_DEPLOY_TARGET_pco_bogosort_TYPE EXECUTABLE)
