@@ -1,0 +1,211 @@
+diff --git a/rapport.md b/rapport.md
+index e69de29bb2d1d6434b8b29ae775ad8c2e48c5391..56488aa2b1f94e0a4a8aca55a874bf3ca029f14b 100644
+--- a/rapport.md
++++ b/rapport.md
+@@ -0,0 +1,46 @@
++# Rapport : Ajout d'un appel système pour `fork2`
++
++Dans ce rapport, je vais détailler les différentes étapes nécessaires à l’ajout d’un appel système (`syscall`) pour implémenter la fonctionnalité `fork2`. Chaque modification dans les fichiers concernés sera expliquée pour illustrer son rôle dans la gestion de l’appel système.
++
++## 1. `so3/include/syscall.h` : Déclaration du numéro unique du syscall
++La première étape pour ajouter un nouvel appel système est de définir un **numéro unique** dans ce fichier. Ce numéro sera utilisé pour identifier l'appel `fork2` dans le système et sera référencé aussi bien par le kernel que par les appels en espace utilisateur (userland). Chaque syscall a un identifiant unique qui est utilisé pour son routage au sein du kernel.
++
++## 2. `so3/include/process.h` : Définition de l'en-tête de la méthode kernel `do_fork2()`
++Dans ce fichier, j'ajoute la **déclaration** de la fonction du kernel qui sera appelée pour exécuter l'appel système `fork2`. Cette fonction, nommée `do_fork2()`, sera responsable de la duplication d'un processus existant, à la manière de `fork()` sous les systèmes Unix. Elle sera utilisée dans le noyau pour réaliser toutes les étapes nécessaires à la création du processus enfant.
++
++## 3. `so3/kernel/process.c` : Implémentation de la fonction `do_fork2()`
++C'est ici que se trouve l'**implémentation de la fonction** `do_fork2()`. Cette méthode réalise toutes les actions nécessaires pour effectuer un fork :
++- **Duplication du processus** parent dans un nouveau processus enfant.
++- **Réservation de la mémoire** pour le nouveau processus.
++- **Copie de la pile noyau** et de l’espace utilisateur du parent vers l’enfant.
++- Mise en place des contextes d’exécution pour l’enfant, et préparation du **thread principal** de l’enfant.
++- **Notification du système de gestion des interruptions (IRQ)** que le processus est prêt à être planifié.
++
++Cette fonction contient aussi un appel à `printk` pour journaliser la création du nouveau processus avec son PID.
++
++## 4. `so3/kernel/syscalls.c` : Ajout de la gestion de l'appel système dans le kernel
++Dans ce fichier, j'ajoute une **entrée spécifique** dans la méthode de gestion des appels système (`syscall_handle`) pour reconnaître le syscall `fork2`. Lorsqu'un programme en espace utilisateur appelle cette fonction, le noyau doit être capable d'identifier quel syscall a été demandé et d’appeler la fonction kernel appropriée, en l'occurrence `do_fork2()`.
++
++## 5. `usr/lib/libc/include/syscall.h` : Définition côté userland de l'appel `fork2()`
++Ce fichier déclare la fonction `fork2()` côté **userland**. Il s’agit d’une abstraction qui permet aux programmes utilisateur de faire un appel système en invoquant simplement cette fonction. Ce header est inclus dans les programmes en espace utilisateur pour leur donner accès au syscall `fork2`.
++
++## 6. `usr/lib/libc/crt0.S` : Définition de l'appel assembleur pour `fork2()`
++Dans ce fichier en assembleur, j'ajoute l’**instruction assembleur** qui effectue l’appel système. Cet appel est crucial pour transférer l’exécution du programme en espace utilisateur vers le kernel, en passant par le gestionnaire d’appels système. Cette étape utilise les registres pour passer les arguments nécessaires et identifier le syscall à exécuter, ici `fork2`.
++
++---
++
++## Cheminement complet de l'appel système `fork2`
++
++1. **Appel depuis un programme en userland** : Le programme utilisateur appelle la fonction `fork2()` définie dans la libc (fichier `syscall.h` côté userland).
++   
++2. **Passage au noyau via assembleur** : Cette fonction utilise une instruction assembleur définie dans `crt0.S` pour déclencher un appel système vers le kernel.
++
++3. **Routage par le kernel** : L'appel est reçu par le gestionnaire d'appels système (`syscall_handle`), qui identifie le syscall via le numéro défini dans `syscall.h`. Il redirige ensuite l'appel vers la fonction `do_fork2()` implémentée dans `process.c`.
++
++4. **Exécution du fork dans le kernel** : La fonction `do_fork2()` réalise les étapes nécessaires pour créer un nouveau processus enfant, en dupliquant le processus parent, en configurant le contexte d'exécution, et en préparant la planification de l'enfant.
++
++5. **Retour au userland** : Une fois le processus enfant créé, le noyau retourne au programme utilisateur. Le processus enfant ne repassera pas par cette étape, car il continuera son exécution depuis un point de reprise spécifique.
++
++---
++
++Ce cheminement complet montre comment un appel système pour `fork2()` est pris en charge du point de vue utilisateur jusqu'à son exécution dans le noyau. Chaque fichier modifié joue un rôle clé pour assurer la bonne gestion et l’exécution du syscall.
+diff --git a/so3/include/process.h b/so3/include/process.h
+index dd9d656a3354dadf3b6c18e712880d4af23b185d..8a814dcfb49ea22acff70000d87ccfa8ce974080 100644
+--- a/so3/include/process.h
++++ b/so3/include/process.h
+@@ -138,6 +138,7 @@ uint32_t do_getpid(void);
+ 
+ int do_execve(const char *filename, char **argv, char **envp);
+ int do_fork(void);
++int do_fork2(void);
+ void do_exit(int exit_status);
+ int do_waitpid(int pid, uint32_t *wstatus, uint32_t options);
+ 
+diff --git a/so3/include/syscall.h b/so3/include/syscall.h
+index 33708726d1816423e5c4772cad9ebf6ab864b27f..0503eda58d4fcbf6eef4e4fe64f5499ab6c540a4 100644
+--- a/so3/include/syscall.h
++++ b/so3/include/syscall.h
+@@ -49,7 +49,7 @@
+ #define SYSCALL_FCNTL		21
+ #define SYSCALL_DUP		22
+ #define SYSCALL_DUP2		23
+-
++#define SYSCALL_FORK2 		24
+ #define SYSCALL_SOCKET 		26
+ #define SYSCALL_BIND		27
+ #define SYSCALL_LISTEN		28
+diff --git a/so3/kernel/process.c b/so3/kernel/process.c
+index 0288cdf29a9b9f3f2391ae5836bd78c941c72d32..357ed275ec755f3f3714b8580abe2c0a92914f90 100644
+--- a/so3/kernel/process.c
++++ b/so3/kernel/process.c
+@@ -839,6 +839,79 @@ int do_fork(void)
+ 
+ 	return newp->pid;
+ }
++/*
++* For a new process from the current running process.
++*/
++int do_fork2(void) {
++    pcb_t *newp, *parent;
++    unsigned long flags;
++
++    // Sauvegarder les interruptions locales et désactiver les interruptions
++    flags = local_irq_save();
++
++    // Récupérer le processus parent (le processus actuel)
++    parent = current()->pcb;
++
++    // Autoriser uniquement le fork() depuis le thread principal pour l'instant
++    if (current() != parent->main_thread) {
++        printk("%s: forking from a thread other than the main thread is not allowed so far ...\n", __func__);
++        return -1;
++    }
++
++    // Dupliquer les éléments du processus parent dans le processus enfant
++    newp = duplicate_process(parent);
++
++    // Copier l'espace utilisateur du processus parent dans l'enfant
++    duplicate_user_space(parent, newp);
++
++    /*
++     * Pour l'instant, nous ne créons que le thread principal dans l'enfant.
++     * Dans le futur, il faudra créer un thread pour chaque thread existant
++     * dans le processus parent.
++     */
++    sprintf(newp->name, "%s_child_%d", parent->name, newp->pid);
++
++    // Créer le thread principal de l'enfant
++    newp->main_thread = user_thread(NULL, newp->name, (void *)arch_get_args_base(), newp);
++
++    // Copier la pile noyau du thread principal
++    memcpy(
++        (void *)get_kernel_stack_top(newp->main_thread->stack_slotID) - THREAD_STACK_SIZE,
++        (void *)get_kernel_stack_top(parent->main_thread->stack_slotID) - THREAD_STACK_SIZE,
++        THREAD_STACK_SIZE
++    );
++
++    /*
++     * Sauvegarder le contexte actuel pour que le nouveau thread
++     * puisse poursuivre son exécution une fois planifié.
++     */
++    __save_context(newp->main_thread, get_kernel_stack_top(newp->main_thread->stack_slotID));
++
++    // Marquer le processus enfant comme prêt à être planifié
++    newp->state = PROC_STATE_READY;
++
++    // Vérifier que les interruptions locales sont bien désactivées
++    BUG_ON(!local_irq_is_disabled());
++
++    // Préparer la planification pour voir si un changement de contexte est nécessaire
++    raise_softirq(SCHEDULE_SOFTIRQ);
++
++    // Restaurer les interruptions locales
++    local_irq_restore(flags);
++
++    // Afficher un message indiquant que le fork a réussi
++    printk(
++        "fork2(): process test_fork2.elf with pid %d forked to child with pid %d\n",
++        parent->pid, newp->pid
++    );
++
++    /*
++     * Retourner le PID du processus enfant.
++     * Le processus enfant ne retournera pas ici, il sautera directement à
++     * ret_from_fork dans le fichier context.S.
++     */
++    return newp->pid;
++}
+ 
+ /*
+  * Terminates a process.
+diff --git a/so3/kernel/syscalls.c b/so3/kernel/syscalls.c
+index 03c6a06136da10cc5961a0b2dd9786c49c7e12e3..4203aaf8e95e3efc33b10cce9ee32c14d2d08b6e 100644
+--- a/so3/kernel/syscalls.c
++++ b/so3/kernel/syscalls.c
+@@ -111,7 +111,9 @@ long syscall_handle(unsigned long r0, unsigned long r1, unsigned long r2, unsign
+ 		case SYSCALL_FORK:
+ 			result = do_fork();
+ 			break;
+-
++		case SYSCALL_FORK2:
++			result = do_fork2();
++			break;
+ 		case SYSCALL_WAITPID:
+ 			result = do_waitpid(r0, (uint32_t *) r1, r2);
+ 			break;
+diff --git a/usr/lib/libc/crt0.S b/usr/lib/libc/crt0.S
+index fc15eb08f4112f08b0ecf44df93e60f16a7174cc..9ffad66d288945d3827ebeef389af9f7993fa13c 100755
+--- a/usr/lib/libc/crt0.S
++++ b/usr/lib/libc/crt0.S
+@@ -120,6 +120,7 @@ SYSCALLSTUB sys_execve,			syscallExecve
+ SYSCALLSTUB sys_waitpid,		syscallWaitpid
+ SYSCALLSTUB sys_pause, 			syscallPause
+ SYSCALLSTUB sys_fork, 			syscallFork
++SYSCALLSTUB sys_fork2, 			syscallFork2
+ SYSCALLSTUB sys_readdir, 		syscallReaddir
+ SYSCALLSTUB sys_chdir, 			syscallChdir
+ SYSCALLSTUB sys_getcwd, 		syscallGetcwd
+diff --git a/usr/lib/libc/include/syscall.h b/usr/lib/libc/include/syscall.h
+index 651c4bc3ccc43be2fc2dd7b320070cbfc114fba1..c1d524e1e7497c4f150a6676743f316fb638e36a 100644
+--- a/usr/lib/libc/include/syscall.h
++++ b/usr/lib/libc/include/syscall.h
+@@ -50,6 +50,7 @@
+ #define syscallFcntl			21
+ #define syscallDup			22
+ #define syscallDup2			23
++#define syscallFork2	 		24
+ #define syscallSchedSetParam 		25
+ #define syscallSocket 			26
+ #define syscallBind			27
+@@ -200,7 +201,10 @@ int sys_nanosleep(const struct timespec *req, struct timespec *rem);
+  * Fork a new process according to the standard UNIX fork system call.
+  */
+ int sys_fork(void);
+-
++/**
++ * Fork a new process according to the standard UNIX fork system call.
++ */
++int sys_fork2(void);
+ /**
+  * creat() is equivalent to open() with flags equal to O_CREAT|O_WRONLY|O_TRUNC
+  */

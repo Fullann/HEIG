@@ -1,0 +1,18 @@
+diff --git a/rapport.md b/rapport.md
+index e69de29bb2d1d6434b8b29ae775ad8c2e48c5391..ad1f21da929e9cd7c276dda8ed7ac2ed24b51b5a 100644
+--- a/rapport.md
++++ b/rapport.md
+@@ -0,0 +1,12 @@
++1) 
++    a) Kernel (noyau)
++    b) Kernel (noyau)
++    c) User
++    d) Kernel
++
++2) so3/usr
++3)
++    a) usr/lib/libc
++    b) User => La libc fournit une interface aux programmes utilisateurs pour interagir avec le noyau.
++    c) Dans le noyau on a pas acces directement a la libc qui sont conçues pour fonctionner en espace utilisateur.
++4) so3/arch => arm32,arm34
+\ No newline at end of file

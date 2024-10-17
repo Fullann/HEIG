@@ -1,0 +1,53 @@
+diff --git a/so3/devices/timer/arm_timer.c b/so3/devices/timer/arm_timer.c
+index 7ced21ae815f9ac40c692edfb6bbb45d4b5d8fae..0f967ef78fc42a993e0635f890949f0f7a315935 100644
+--- a/so3/devices/timer/arm_timer.c
++++ b/so3/devices/timer/arm_timer.c
+@@ -84,9 +84,13 @@ static irq_return_t timer_isr(int irq, void *dev) {
+ 
+ #ifdef CONFIG_AVZ
+ 		timer_interrupt((smp_processor_id() == ME_CPU) ? true : false);
+-#else
++#else	
+ 		jiffies++;
+ 
++		if (jiffies % 80 == 0) {
+++			printk("%lld\n", jiffies);
+++		}
++
+ 		raise_softirq(TIMER_SOFTIRQ);
+ #endif
+ 	}
+diff --git a/so3/include/version.h b/so3/include/version.h
+index 49e2d427604e87c09fc13d2e59ffb4881ecd04f4..011c59c4d13d5b799abe0198ae5892ba97da3a32 100644
+--- a/so3/include/version.h
++++ b/so3/include/version.h
+@@ -27,7 +27,7 @@
+  * - Upgrade U-boot to 2022.04
+  */
+ 
+-#define SO3_KERNEL_VERSION "2023.6.0"
++#define SO3_KERNEL_VERSION "2023.6.1"
+ 
+ #endif /* VERSION_H */
+ 
+diff --git a/usr/src/sh.c b/usr/src/sh.c
+index 473e129a7584cebe9413cd89c03d67c20c312f0a..80831079e422a0cf8bc90ebed3c077f90d400ad9 100644
+--- a/usr/src/sh.c
++++ b/usr/src/sh.c
+@@ -42,11 +42,13 @@ void parse_token(char *str) {
+ 	next_token = strtok(str, " ");
+ 	if (!next_token)
+ 		return;
+-
++	printf("%s\n", next_token);
+ 	strcpy(tokens[i++], next_token);
+ 
+-	while ((next_token = strtok(NULL, " ")) != NULL)
+-		strcpy(tokens[i++], next_token);
++	while ((next_token = strtok(NULL, " ")) != NULL) {
+++		printf("%s\n", next_token);
++ 		strcpy(tokens[i++], next_token);
+++	}
+ }
+ 
+ /*

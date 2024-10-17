@@ -1,0 +1,71 @@
+diff --git a/so3/kernel/main.c b/so3/kernel/main.c
+index b0b72e0bc1dc86464b5eb76ec5b8cd418f813c57..b33cf6f2860543e21d9010c821527630b1adf7c9 100644
+--- a/so3/kernel/main.c
++++ b/so3/kernel/main.c
+@@ -100,7 +100,7 @@ void *rest_init(void *dummy) {
+ void hidden_init(void) {
+ 	volatile int *ptr = NULL;
+ 
+-	*ptr = 0xbeef;
++	//*ptr = 0xbeef;
+ 
+     /* Ok, now you should know what to remove... */
+ }
+diff --git a/usr/src/CMakeLists.txt b/usr/src/CMakeLists.txt
+index 783c34aa051d3f31e707f8a29013daca22bcc224..8100479813e61f4a1122f3bdc58edb15b359c262 100644
+--- a/usr/src/CMakeLists.txt
++++ b/usr/src/CMakeLists.txt
+@@ -3,11 +3,11 @@ add_executable(sh.elf sh.c)
+ add_executable(ls.elf ls.c)
+ add_executable(echo.elf echo.c)
+ add_executable(cat.elf cat.c)
+-
++add_executable(hello.elf hello.c)
+ 
+ target_link_libraries(sh.elf c)
+ target_link_libraries(ls.elf c)
+ target_link_libraries(echo.elf c)
+ target_link_libraries(cat.elf c)
+-
++target_link_libraries(hello.elf c)
+ 
+diff --git a/usr/src/hello.c b/usr/src/hello.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..f2af17ca35a9e65bbb0d96072679af17bfc74857
+--- /dev/null
++++ b/usr/src/hello.c
+@@ -0,0 +1,21 @@
++#include <stdio.h>
++
++int main(int argc, char **argv) {
++    // Chaîne de caractères à modifier
++    char *text = "Hello Word !\n";
++    
++    // Affichage de la chaîne et de son adresse en mémoire
++    printf("Original text: %s", text);
++    printf("Adresse mémoire de la chaîne: 0x%#010x\n", (unsigned int)text);
++
++    // Modification de chaque byte de la chaîne de caractères
++    for (int i = 0; *((char *)0x8000 + i) != '\0'; i++) {
++        // Incrémenter chaque byte de 1
++        *((char *)0x8000 + i) += 1;
++    }
++
++    // Affichage de la chaîne modifiée
++    printf("Modified text: %s", (char *)0x8000);
++
++    return 0;
++}
+diff --git a/usr/src/sh.c b/usr/src/sh.c
+index 4f834a8385cd6b7a72a6a64120ccdb27d298812f..7f68775cd24610251f5c3657c394f553f3e17c4e 100644
+--- a/usr/src/sh.c
++++ b/usr/src/sh.c
+@@ -198,7 +198,7 @@ void main(int argc, char *argv[])
+ 		if (strcmp(user_input, ""))
+ 			parse_token(user_input);
+ 
+-		*ptr = 0xdeadbeef;
++		//*ptr = 0xdeadbeef;
+ 
+ 		/* Check if there is at least one token to be processed */
+ 		if (tokens[0][0] != 0)
