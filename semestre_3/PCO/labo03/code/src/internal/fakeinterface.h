@@ -10,7 +10,7 @@
 class FakeInterface : public IWindowInterface {
 public:
     void consoleAppendText(unsigned int consoleId, QString text) override {
-        log.push_back("Console: " + text.toStdString());
+        // log.push_back("Console: " + text.toStdString());
     }
 
     void updateFund(unsigned int uniqueId, unsigned fund) override {

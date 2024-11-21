@@ -1,0 +1,18 @@
+Etudiants :
+Regenass Maxime
+Füllemann Nathan
+
+
+Conception                  :  1.71 / 2.0
+Exécution et fonctionnement :  1.16 / 2.0
+Documentation               :   1.0 / 1.0
+Bonus / Malus               :   0.0 / 5.0
+
+Note finale                 : 4.9
+
+
+Remarque assistant: 
+Vos tests sont incomplets. Pour la prochaine fois, pensez à faire un tableau récapitulatif qui explique ce que vous testez, la valeur attendue et obtenue.
+Tests automatiques:
+	HospitalTest.FreeHealedPatient: dans nos tests, vous libérez plusieurs patients trop tôt
+Possible deadlock car vous ne libérez pas systématiquement vos mutex (i.e. Hospital::transferPatientsFromClinic).

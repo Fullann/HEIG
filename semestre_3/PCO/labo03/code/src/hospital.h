@@ -16,6 +16,7 @@
 class Hospital : public Seller 
 {
 public:
+    friend class TestableHospital;
     /**
      * @brief Hospital Constructor
      * @param uniqueId L'identifiant unique de l'hôpital

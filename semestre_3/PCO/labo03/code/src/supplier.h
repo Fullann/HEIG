@@ -10,6 +10,7 @@
 
 class Supplier : public Seller {
 public:
+    friend class TestableSupplier;
     /**
      * @brief Supplier Constructor
      * @param uniqueId : ID du fournisseur

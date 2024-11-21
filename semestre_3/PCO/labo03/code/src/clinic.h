@@ -14,6 +14,7 @@
 class Clinic : public Seller
 {
 public:
+    friend class TestableClinic;
     /**
      * @brief Constructeur de la classe Clinic
      * @param uniqueId Identifiant unique de la clinique
