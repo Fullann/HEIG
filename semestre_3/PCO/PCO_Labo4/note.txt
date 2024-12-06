@@ -1,0 +1,13 @@
+Etudiants :
+Regenass Maxime
+Füllemann Nathan
+
+
+Conception (documentation)  :   2.0 / 2.0
+Exécution et fonctionnement :   1.0 / 1.0
+Codage                      :  0.25 / 0.25
+Documentation               :  1.25 / 1.25
+Commentaires Codes          :   0.5 / 0.5
+Bonus / Malus               :   0.0 / 5.0
+
+Note finale                 : 6.0
