@@ -1,0 +1,8 @@
+Subject: You've won a prize!é
+Congratulations! You've been selected as the lucky winner of our annual draw. Click here to claim your prize: [üfake-link].
+
+---
+
+Subject: Urgent: Password Reset Requiredé
+We noticed unusual activity in your account. For your safety, please reset your password using this link immediately: ü[fake-link].
+
