@@ -1,0 +1,70 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-4b62cac7f30d6e7cc8f1.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "PROG_LAB05",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "PCO_LAB05_benchmarks::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-PCO_LAB05_benchmarks-Debug-e1c561354a5f3caec13d.json",
+					"name" : "PCO_LAB05_benchmarks",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "PCO_LAB05_tests::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-PCO_LAB05_tests-Debug-1e590c3a10edf27316d4.json",
+					"name" : "PCO_LAB05_tests",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/Users/nathan/Documents/GitHub/HEIG/semestre_3/PCO/PCO_Labo5/code/build",
+		"source" : "/Users/nathan/Documents/GitHub/HEIG/semestre_3/PCO/PCO_Labo5/code"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}
