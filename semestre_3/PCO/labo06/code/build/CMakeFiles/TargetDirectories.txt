@@ -1,0 +1,3 @@
+/Users/nathan/Documents/GitHub/PCO_Labo6/code/build/CMakeFiles/PCO_LAB06.dir
+/Users/nathan/Documents/GitHub/PCO_Labo6/code/build/CMakeFiles/edit_cache.dir
+/Users/nathan/Documents/GitHub/PCO_Labo6/code/build/CMakeFiles/rebuild_cache.dir

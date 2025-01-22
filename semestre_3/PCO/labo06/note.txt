@@ -1,0 +1,18 @@
+Etudiants :
+Regenass Maxime
+Füllemann Nathan
+
+
+Conception                  :  1.71 / 2.25
+Exécution et fonctionnement :   0.0 / 0.5
+Codage                      :  0.75 / 0.75
+Documentation               :   1.0 / 1.0
+Commentaires dans le code   :   0.5 / 0.5
+Bonus / Malus               :   0.0 / 5.0
+
+Note finale                 : 5.0
+
+
+Remarque assistant: 
+Vous ne vérifiez si un thread est inactif depuis trop longtemps que lorsqu'une nouvelle tâche est ajoutée (signal de notEmpty qui réveille les threads pour vérifier le elapsed time). Si aucune tâche n'est démarrée, vos threads continuent d'attendre sur la condition et ne sont jamais kill. Il vous manque un thread qui sert à vérifier périodiquement si vos workers sont inactifs et doivent être kill.
+Aucun Google Test n'est réussi car vos workers restent bloqués après avoir traité une task.
