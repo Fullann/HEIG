@@ -1,0 +1,71 @@
+<%
+  const color = container.State == "running" ? "bg-green-100" : "bg-red-100";
+  const isRunning = container.State == "running"
+%>
+<script>
+  function startClickHandler(id){
+    fetch("/run",{
+      method:"PUT",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({id:id}),
+    }).then(response =>{
+      console.log(response);
+      location.reload();
+    })
+  }
+
+  function stopClickHandler(id){
+    fetch("/stop",{
+      method:"PUT",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({id:id}),
+    }).then(response =>{
+      console.log(response);
+      location.reload();
+    })
+  }
+  function removeClickHandler(id){
+    fetch("/remove",{
+      method:"DELETE",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({id:id}),
+    }).then(response =>{
+      console.log(response);
+      location.reload();
+    })
+  }
+
+</script>
+<div class="flex flex-row rounded-lg shadow-lg <%=color%>">
+   <div class="p-6 flex flex-col justify-start">
+      <h5 class="text-gray-900 text-xl font-medium mb-2"><%= container.Names[0]%></h5>
+      
+      <p class="text-gray-700 text-sm mb-4">
+        <%=container.Id%>
+      </p>
+      <p class="text-gray-600 text-xs">Status : <%= container.Status %></p>
+
+      <div class="flex flex-row justify-end gap-4">
+        <% if(isRunning) { %>
+          <button onclick="removeClickHandler('<%=container.Id%>')" type="button" class="inline-flex items-center gap-2 rounded-full border border-gray-500 px-6 py-2 text-sm font-semibold text-gray-500 transition-all hover:bg-gray-500 hover:text-white hover:shadow-lg active:scale-95 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" disabled>Remove</button>
+          <button onclick="startClickHandler('<%=container.Id%>')" type="button" class="inline-flex items-center gap-2 rounded-full border border-gray-500 px-6 py-2 text-sm font-semibold text-gray-500 transition-all hover:bg-gray-500 hover:text-white hover:shadow-lg active:scale-95 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" disabled>Run</button>
+          <button onclick="stopClickHandler('<%=container.Id%>')" type="button" class="inline-flex items-center gap-2 rounded-full border border-red-500 px-6 py-2 text-sm font-semibold text-red-500 transition-all hover:bg-red-500 hover:text-white hover:shadow-lg active:scale-95 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
+            Stop
+          </button>    
+        <% } else { %>
+          <button onclick="removeClickHandler('<%=container.Id%>')" type="button" class="inline-flex items-center gap-2 rounded-full border border-red-500 px-6 py-2 text-sm font-semibold text-red-500 transition-all hover:bg-red-500 hover:text-white hover:shadow-lg active:scale-95 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
+            Remove
+          </button>    
+          <button onclick="startClickHandler('<%=container.Id%>')" type="button" class="inline-flex items-center gap-2 rounded-full border border-green-500 px-6 py-2 text-sm font-semibold text-green-500 transition-all hover:bg-green-500 hover:text-white hover:shadow-lg active:scale-95 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
+            Run
+          </button>
+          <button  onclick="stopClickHandler('<%=container.Id%>')"type="button" class="inline-flex items-center gap-2 rounded-full border border-gray-500 px-6 py-2 text-sm font-semibold text-gray-500 transition-all hover:bg-gray-500 hover:text-white hover:shadow-lg active:scale-95 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" disabled>
+            Stop
+          </button>    
+        <%}%>
+      </div>
+     
+     
+    </div>
+</div>
+

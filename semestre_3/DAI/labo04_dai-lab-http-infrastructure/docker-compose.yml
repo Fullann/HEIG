@@ -1,0 +1,59 @@
+version: "3.9"
+
+networks:
+  default:
+    name: infra-network
+
+services:
+  reverse-proxy:
+    image: traefik:v2.9
+    command:
+      - --providers.file.filename=/etc/traefik/traefik.yaml
+      - --providers.docker
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.traefik.address=:8080
+      - --api.dashboard=true
+      - --log.level=INFO
+    ports:
+      - "80:80"       # Port HTTP
+      - "443:443"     # Port HTTPS
+      - "8080:8080"   # Tableau de bord
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config/traefik.yaml:/etc/traefik/traefik.yaml
+      - ./certs:/etc/traefik/certificates
+
+  static:
+    build: ./static
+    deploy:
+      replicas: 1
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.static.rule=Host(`localhost`)"
+      - "traefik.http.routers.static.entrypoints=websecure"
+      - "traefik.http.routers.static.tls=true"
+      - "traefik.http.services.static.loadbalancer.sticky.cookie=true"
+      - "traefik.http.services.static.loadbalancer.sticky.cookie.name=stickyCookie"
+
+  express:
+    build: ./express
+    ports:
+      - "3000:3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.express.rule=Host(`localhost`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.express.entrypoints=websecure"
+      - "traefik.http.routers.express.tls=true"
+      - "traefik.http.services.express.loadbalancer.server.port=3000"
+
+  managedocker:
+    build: ./manageDocker
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.managedocker.rule=Host(`manage.localhost`)"
+      - "traefik.http.routers.managedocker.entrypoints=websecure"
+      - "traefik.http.routers.managedocker.tls=true"
+      - "traefik.http.services.managedocker.loadbalancer.server.port=5000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
