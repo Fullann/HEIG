@@ -1,0 +1,214 @@
+:root {
+	--light-gray: #f3f4f6;
+	--medium-gray: #e5e7eb;
+	--dark-gray: #9ca3af;
+	--border-width: 1px;
+	--border-style: var(--border-width) solid var(--medium-gray);
+}
+
+html,
+body {
+	height: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+	margin: 0;
+}
+
+ul,
+ol {
+	margin: 0;
+}
+
+/* Base pour le layout et la typographie */
+body#app-main {
+	font-family: "Noto Sans", sans-serif;
+	font-size: 16px;
+	line-height: 24px;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+/* Typographie */
+.text-title {
+	font-size: 48px;
+	font-weight: bold;
+	line-height: 60px;
+}
+
+.text-subtitle-1 {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.text-body-1 {
+	font-size: 16px;
+}
+
+.text-subtitle-2 {
+	font-size: 14px;
+	font-weight: bold;
+	line-height: 21px;
+}
+
+.text-body-2 {
+	font-size: 14px;
+}
+
+.text-overline {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+/* Couleurs */
+.bg-light-gray {
+	background-color: var(--light-gray);
+}
+
+.bg-medium-gray {
+	background-color: var(--medium-gray);
+}
+
+.bg-dark-gray {
+	background-color: var(--dark-gray);
+}
+
+/* Layout principal */
+body#app-main > .content-container {
+	display: flex;
+	flex-direction: row;
+	flex-grow: 1;
+	overflow: hidden;
+}
+
+/* Zone principale */
+main#content-main {
+	padding: 86px;
+	padding-bottom: 0;
+	flex-grow: 1;
+	overflow-y: auto;
+}
+
+main#content-main > .song-list {
+	margin-bottom: 32px;
+}
+
+/* Section d'infos de la playlist */
+#playlist-info {
+	display: flex;
+	flex-direction: row;
+	gap: 32px;
+	margin-bottom: 32px;
+}
+
+#playlist-info > img.playlist-img {
+	width: 250px;
+	height: 250px;
+}
+
+#playlist-info .header {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	gap: 8px;
+}
+
+/* File d'attente */
+#queue {
+	position: relative;
+	background-color: var(--light-gray);
+	border-left: var(--border-style);
+	padding: 32px;
+	width: 330px;
+	flex-shrink: 0;
+}
+
+#queue .empty-label {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+	color: var(--dark-gray);
+}
+
+/* Lecteur */
+#player {
+	display: flex;
+	flex-direction: row;
+	height: 80px;
+	border-top: var(--border-style);
+}
+
+#player img.album-image {
+	height: 100%;
+}
+
+#player > .content {
+	flex: 1;
+	display: flex;
+}
+
+#player > .content-left {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 16px;
+}
+
+#player > .content-controls {
+	display: flex;
+	flex-direction: row;
+	flex-grow: 0;
+	justify-content: center;
+	align-items: center;
+	gap: 32px;
+}
+
+#player > .content-right {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	justify-content: center;
+}
+
+/* Liste de chansons */
+ul.song-list {
+	list-style: none;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+ul.song-list > li {
+	padding: 16px;
+}
+
+ul.song-list > li:hover {
+	background-color: var(--medium-gray);
+}
+
+/* Sponsor Deezer */
+#deezer-sponsor {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	margin-right: 16px;
+}
+
+#deezer-sponsor > img {
+	height: 30px;
+}
+
+/* Contrôles de contenu */
+.content-controls > img {
+	height: 40px;
+	cursor: pointer;
+}
