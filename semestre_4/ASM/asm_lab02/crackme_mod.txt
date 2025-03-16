@@ -1,0 +1,18 @@
+1. Identifier l’instruction responsable du contrôle
+L’instruction je (jump if equal) est située à l’adresse 0x4011d :
+
+0x4011d:  74 21    je  0x40140 <main+0xea>
+- Cette instruction effectue un saut si la comparaison précédente indique une égalité, empêchant ainsi l’affichage du message en cas d’échec de l’authentification.
+
+2. Remplacement de l’instruction je par deux nop (0x90)
+- Un NOP est une instruction qui ne fait rien, permettant de désactiver le saut sans perturber le reste du programme.
+Commandes exécutées sous U-Boot pour modifier la mémoire en direct :
+
+md.w 0x4011d          # Vérifier la valeur actuelle en mémoire
+mw.w 0x4011d 0x9090   # Remplacer "je" (0x74 0x21) par "nop nop" (0x90 0x90)
+md.w 0x4011d          # Vérifier que la modification a bien été prise en compte
+go 0x40000            # Exécuter le programme modifié
+
+3. Résultat obtenu :
+Le saut conditionnel (je) étant neutralisé, l’exécution du programme se poursuit normalement sans vérifier la condition.
+Le message est affiché sans nécessiter un mot de passe valide.

@@ -1,0 +1,25 @@
+1. Placer un point d’arrêt sur la fonction check_password()
+Arrêter l’exécution juste avant le return, où la valeur de retour est déterminée.
+
+2. Saisir un mot de passe quelconque et avancer jusqu’à la comparaison à l’adresse 0x82000194
+À cette adresse, l’instruction CMP compare la valeur contenue dans le registre r3 avec 0.
+Si r3 == 0, l’authentification échoue.
+
+3. Modifier la valeur du registre r3
+Changer r3 pour 1 avant l’instruction de comparaison :
+set r3 = 1
+continue
+
+Ainsi, la condition if (check_password() == 0) devient fausse et nous sommes authentifiés avec succès.
+
+4. Résultat obtenu
+Le message "Good job !" s’affiche, prouvant que nous avons contourné la vérification du mot de passe.
+
+Autres approches possibles
+Modifier r2 ou r3 pour qu’ils correspondent à la valeur correcte au moment de la comparaison des hachages (0x82000070).
+Modifier directement l’instruction de comparaison (CMP r3, #0) en une instruction neutre (MOV r3, #1).
+Pourquoi ne pas modifier directement le PC vers le message ?
+Bien que sauter directement à la fin afficherait le message, cela ne signifie pas une authentification réussie.
+
+- En pratique, une connexion implique souvent la génération d’un cookie d’authentification ou la mise à jour d’un état interne.
+- Sauter directement à l’affichage sans passer par ces étapes pourrait laisser le programme dans un état incohérent.
