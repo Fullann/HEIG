@@ -1,0 +1,34 @@
+@startuml
+usecase (Control financier) as conf
+usecase (Vérifier la commande) as verc
+usecase (Enregistrer la commande) as enrc
+usecase (Effectuer une commande) as effc
+usecase (Commande hors catalogue) as comhc
+usecase (Commande ordinaire) as como
+
+
+actor Manager as mgr
+actor Vendeur as ven
+actor Client as cli
+actor "Client priviligé" as clip
+
+clip -up-|> cli
+
+comhc -up-|> effc
+como -up-|> effc
+
+effc .right.> enrc : <<include>>
+verc .up.> conf : <<include>>
+verc .down.> enrc : <<extend>>
+
+
+cli -right- effc 
+clip -right- comhc
+ven -left- enrc
+mgr -left- verc
+
+'formattage
+comhc -[hidden]> como
+
+
+@enduml

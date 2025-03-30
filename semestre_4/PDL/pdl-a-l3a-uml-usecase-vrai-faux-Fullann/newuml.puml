@@ -1,0 +1,39 @@
+@startuml
+usecase (Contrôle financier) as conf
+usecase (Vérifier la commande) as verc
+usecase (Enregistrer la commande) as enrc
+usecase (Effectuer une commande) as effc
+usecase (Commande hors catalogue) as comhc
+usecase (Commande ordinaire) as como
+
+actor Manager as mgr
+actor Vendeur as ven
+actor Client as cli
+actor "Client privilégié" as clip
+
+' Relation d'héritage entre client et client privilégié
+clip -up-|> cli
+
+' Spécialisation de la commande
+comhc -up-|> effc
+como -up-|> effc
+
+' Associations entre use cases
+effc .right.> enrc : <<include>>
+verc .up.> conf : <<include>>
+verc .down.> enrc : <<extend>>
+
+' Associations avec les acteurs
+' Un client non privilégié ne peut passer qu'une commande ordinaire
+cli -right- como
+' Le client privilégié peut passer soit une commande ordinaire, soit une commande hors catalogue
+clip -right- como
+clip -right- comhc
+
+ven -left- enrc
+mgr -left- verc
+
+' Pour conserver le formatage
+comhc -[hidden]> como
+
+@enduml

@@ -63,7 +63,7 @@ Or, \(45 = 3^2 \times 5\) donc :
 \]
 **Réponse :** 24
 
-### 2.5 Calcul de \(1538 \mod 15\) et vérification du théorème d’Euler
+### 2.5 Calcul de \(153^8 \mod 15\) et vérification du théorème d’Euler
 On a :
 \[
 1538 = 15 \times 102 + 8,\quad \text{donc }1538 \mod 15 = 8.

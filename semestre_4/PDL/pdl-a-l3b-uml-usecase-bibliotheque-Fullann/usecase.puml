@@ -1,0 +1,45 @@
+@startuml
+actor "Lecteur" as lecteur
+actor "Bibliothécaire" as biblio
+actor "Bibliothécaire spécialiste" as biblioSpec
+actor "Serveur d'authentification" as serveur
+
+' Relations d'héritage
+biblioSpec -up-|> biblio
+
+' Use cases pour l'emprunt de livre
+usecase "Emprunter un livre" as emprunt
+usecase "S'identifier avec carte de lecteur" as identif
+usecase "Vérifier la disponibilité du livre" as verif
+usecase "Enregistrer le prêt" as enreg
+usecase "Demander prêt inter-bibliothèque" as preInter
+usecase "Mettre sur liste d'attente" as listeAtt
+
+' Use case pour l'aide à la recherche bibliographique
+usecase "Obtenir aide bibliographique" as aide
+
+' Use case d'authentification pour le bibliothécaire
+usecase "S'authentifier (carte ou mot de passe)" as auth
+
+' Associations acteurs / use cases
+lecteur --> identif
+identif --> emprunt
+
+emprunt --> verif : <<include>>
+emprunt --> enreg : <<include>>
+
+biblio --> auth
+auth --> serveur
+
+biblio --> verif
+biblio --> enreg
+
+' Extensions lors de la vérification
+verif --> preInter : <<extend>>
+verif --> listeAtt : <<extend>>
+
+' Service d'aide bibliographique
+lecteur --> aide
+biblioSpec --> aide
+
+@enduml
