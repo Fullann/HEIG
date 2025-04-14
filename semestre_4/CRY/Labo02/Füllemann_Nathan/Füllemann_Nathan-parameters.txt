@@ -1,0 +1,16 @@
+# Dans tout ce qui suit, les guillemets/apostrophes ne font pas partie des chaines de characteres. 
+Nom_Prenom="Füllemann_Nathan"
+###### Spongy AES
+19
+hash = b'zZFA10Jx7vH5g/liWgyzWfXCuiM7GOEEUtFNeeN64xq9Pa6SbjY9+nAbuE2JCjl7y69uO4zHRZTYmT2Yi925Ag=='
+###### GCM
+m1       = b'This is a Test !'
+iv1      = b'W5ZS9Yu3dEs3hDtB'
+c1       = b'2s9IB8rcQZh/Gljgb+WWQw=='
+t1       = b'MD4tYk+xhF1j58oX7m3AXA=='
+iv2      = b'W5ZS9Yu3dEs3hDtB'
+c2       = b'3sZSB8qIEtFqU2LgbvDEGw=='
+t2       = b'IajN3Q9omEsjsAS2nbg9SA=='
+mChall   = b'100.00CHF to ADC'
+###### Speck
+#Le fichier se trouve dans le fichier annexe Füllemann_Nathan-speck.txt

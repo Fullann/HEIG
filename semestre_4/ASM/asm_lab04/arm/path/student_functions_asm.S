@@ -15,11 +15,10 @@ discrete_distance_asm:
 
 
         
-        @ d = 0 if a == b, 1 otherwise
-
-        cmp     r0,     r1              @ compare r0 and r1
-        moveq   r0,     #0              @ return 0 if a == b
-        movne   r0,     #1              @ return 1 otherwise
+        @ d = 0 si a == b, 1 sinon
+        cmp     r0,     r1              @ compare r0 et r1
+        moveq   r0,     #0              @ retourne 0 si a == b
+        movne   r0,     #1              @ retourne 1 sinon
 
 	@@@@@@@@@@@ ----------- @@@@@@@@@@
 
@@ -44,16 +43,16 @@ hamming_distance_asm:
         mov     r2, r0, lsr #16         @ r2 = r0 >> 16 [x_a]
         mov     r3, r1, lsr #16         @ r3 = r1 >> 16 [x_b]
 
-        cmp     r3, r2                  @ compare r3 [x_b] and r2 [x_a]
-        addne   r4, r4, #1              @ increment r4 if x_a and x_b are not equal
+        cmp     r3, r2                  @ compare r3 [x_b] et r2 [x_a]
+        addne   r4, r4, #1              @ incrémente r4 si x_a et x_b ne sont pas égaux
 
         mov     r2, r0, lsl #16         @ r2 = r0 << 16 [y_a]
         mov     r3, r1, lsl #16         @ r3 = r1 << 16 [y_b]
 
-        cmp     r3, r2                  @ compare r3 [y_b] and r2 [y_b]
-        addne   r4, r4, #1              @ increment r4 if y_a and y_b are not equal
+        cmp     r3, r2                  @ compare r3 [y_b] et r2 [y_a]
+        addne   r4, r4, #1              @ incrémente r4 si y_a et y_b ne sont pas égaux
 
-        mov     r0, r4                  @ return distance in r0
+        mov     r0, r4                  @ retourne la distance dans r0
 
 	@@@@@@@@@@@ ----------- @@@@@@@@@@
 
@@ -73,30 +72,29 @@ manhattan_distance_asm:
 
         @@@@@@@@@@@ A completer @@@@@@@@@@
 
-        @ d = |x_a - x_b| + |y_a - y_b|
         
-        mov     r4, #0                  @ r4 = 0, will be used to store the result of the operations
-        movw    r5, #0xFFFF             @ r5 = 0xFFFF, will be used to clear the upper half of the registers
+        mov     r4, #0                  @ initialise le résultat à 0 dans r4
+        movw    r5, #0xFFFF             @ masque pour effacer la moitié supérieure des registres
 
-        mov     r2, r0, lsr #16         @ r2 = r0 >> 16 [x_a]
-        mov     r3, r1, lsr #16         @ r3 = r1 >> 16 [x_b]
+        mov     r2, r0, lsr #16         @ extrait x_a de a (r2 = x_a)
+        mov     r3, r1, lsr #16         @ extrait x_b de b (r3 = x_b)
 
-        sub     r2, r2, r3              @ r2 = r2 - r3 (x_a - x_b)
-        cmp     r2, #0                  @ compare r2 with 0
-        rsblt   r2, r2, #0              @ compute 0 - r2 if r2 < 0 (take the absolute value)
+        sub     r2, r2, r3              @ calcule x_a - x_b
+        cmp     r2, #0                  @ compare avec 0 pour déterminer la valeur absolue
+        rsblt   r2, r2, #0              @ prend la valeur absolue si négatif
 
-        mov     r4, r2                  @ store the result in r4
+        mov     r4, r2                  @ stocke le résultat partiel dans r4
 
-        mov     r2, r0                  @ r2 = r0
-        and     r2, r2, r5              @ clear the upper half of r2
-        mov     r3, r1                  @ r3 = r1
-        and     r3, r3, r5              @ clear the upper half of r3
+        mov     r2, r0                  @ extrait y_a de a
+        and     r2, r2, r5              @ efface la moitié supérieure de y_a
+        mov     r3, r1                  @ extrait y_b de b
+        and     r3, r3, r5              @ efface la moitié supérieure de y_b
 
-        sub     r2, r2, r3              @ r2 = r2 - r3 (y_a - y_b)
-        cmp     r2, #0                  @ compare r2 with 0
-        rsblt   r2, r2, #0              @ take the absolute value
+        sub     r2, r2, r3              @ calcule y_a - y_b
+        cmp     r2, #0                  @ compare avec 0 pour déterminer la valeur absolue
+        rsblt   r2, r2, #0              @ prend la valeur absolue si négatif
 
-        add     r0, r2, r4              @ r0 = r2 (|y_a - y_b|) + r4 (|x_a - x_b|)
+        add     r0, r2, r4              @ somme |x_a - x_b| + |y_a - y_b|
 
 	@@@@@@@@@@@ ----------- @@@@@@@@@@
 
@@ -116,28 +114,26 @@ ssd_semi_distance_asm:
 
         @@@@@@@@@@@ A completer @@@@@@@@@@
 
-        @ d = (x_a - x_b)^2 + (y_a - y_b)^2
-
-        mov     r4, #0                  @ r4 = 0, will be used to store the result of the operations
-        movw    r5, #0xFFFF             @ r5 = 0xFFFF, will be used to clear the upper half of the registers
+        mov     r4, #0                  @ r4 = 0, stockera le résultat des opérations
+        movw    r5, #0xFFFF             @ r5 = 0xFFFF (masque pour effacer la moitié supérieure)
 
         mov     r2, r0, lsr #16         @ r2 = r0 >> 16 [x_a]
         mov     r3, r1, lsr #16         @ r3 = r1 >> 16 [x_b]
 
-        sub     r2, r2, r3              @ r2 = r2 - r3 (x_a - x_b)
-        mul     r2, r2, r2              @ r2 = r2 * r2
+        sub     r2, r2, r3              @ calcule x_a - x_b
+        mul     r2, r2, r2              @ met au carré la différence (x_a - x_b)^2
 
-        mov     r4, r2                  @ store the result in r4
+        mov     r4, r2                  @ stocke le résultat intermédiaire dans r4
 
-        mov     r2, r0                  @ r2 = r0
-        and     r2, r2, r5              @ clear the upper half of r2
-        mov     r3, r1                  @ r3 = r1
-        and     r3, r3, r5              @ clear the upper half of r3
+        mov     r2, r0                  @ extrait y_a de a
+        and     r2, r2, r5              @ efface la moitié supérieure de y_a
+        mov     r3, r1                  @ extrait y_b de b 
+        and     r3, r3, r5              @ efface la moitié supérieure de y_b
 
-        sub     r2, r2, r3              @ r2 = r2 - r3 (y_a - y_b)
-        mul     r2, r2, r2              @ r2 = r2 * r2
+        sub     r2, r2, r3              @ calcule y_a - y_b
+        mul     r2, r2, r2              @ met au carré la différence (y_a - y_b)^2
 
-        add     r0, r2, r4              @ r0 = r2 (y_a - y_b)^2 + r4 (x_a - x_b)^2
+        add     r0, r2, r4              @ somme (x_a - x_b)^2 + (y_a - y_b)^2 
 	@@@@@@@@@@@ ----------- @@@@@@@@@@
 
         ldmfd sp!, {r4-r12, lr}
