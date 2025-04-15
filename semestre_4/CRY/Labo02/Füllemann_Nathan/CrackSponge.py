@@ -1,68 +1,54 @@
 from Crypto.Cipher import AES
 from Crypto.Util.strxor import strxor
 import itertools
+import string
 import base64
-import sys
+raw_bytes = base64.b64decode(b'zZFA10Jx7vH5g/liWgyzWfXCuiM7GOEEUtFNeeN64xq9Pa6SbjY9+nAbuE2JCjl7y69uO4zHRZTYmT2Yi925Ag==')
+hex_hash = raw_bytes.hex()
+# À remplacer par le hash réel du fichier de paramètres
+TARGET_HASH = bytes.fromhex(hex_hash) 
 
-# Configuration initiale
-rate = 15
+H0 = TARGET_HASH[:15]
+H1 = TARGET_HASH[15:]
+
 cipher = AES.new(b"\x07"*16, AES.MODE_ECB)
-target_hash = base64.b64decode('zZFA10Jx7vH5g/liWgyzWfXCuiM7GOEEUtFNeeN64xq9Pa6SbjY9+nAbuE2JCjl7y69uO4zHRZTYmT2Yi925Ag==')
 
-def pad(message, rate):
-    missing = rate - len(message) % rate
-    return message + b"\x80" + b"\x00"*(missing - 1) if missing != 0 else message
+## Étape 1 : Trouver S_absorb en bruteforçant le 16ème byte
+print("Recherche de S_absorb...")
+S_absorb = None
+for x in range(256):
+    candidate = H0 + bytes([x])
+    if cipher.encrypt(candidate)[0] == H1[0]:
+        S_absorb = candidate
+        break
 
-def custom_sponge(message):
-    message = pad(message, rate)
-    blocks = [message[i*rate:(i+1)*rate] for i in range(len(message)//rate)]
-    state = b"\x00"*16
-    for b in blocks:
-        state = strxor(state[:rate], b) + state[rate:]
-        state = cipher.encrypt(state)
-    return state[:rate]
+if not S_absorb:
+    print("Échec : S_absorb non trouvé")
+    exit()
 
-def crack_flag():
-    charset = [bytes([i]) for i in range(0x20, 0x7f)]  # ASCII imprimable
-    prefix = b'FLAG{'
-    suffix_padding = b'}\x80' + b'\x00'*10
+## Étape 2 : Calculer l'état avant permutation finale
+state_before_perm = cipher.decrypt(S_absorb)
 
-    for c1, c2, c3 in itertools.product(charset, repeat=3):
-        block2 = c1 + c2 + c3 + suffix_padding[:12]  # 3 chars + 12 bytes fixes
-        
-        for capacity in range(256):
-            s2_candidate = target_hash[:15] + bytes([capacity])
-            try:
-                T = cipher.decrypt(s2_candidate)
-            except:
-                continue
-            
-            s1_xor = strxor(T[:15], block2)
-            s1_candidate = s1_xor + bytes([T[15]])
-            
-            try:
-                block1_padded = cipher.decrypt(s1_candidate)
-            except:
-                continue
+## Étape 3 : Bruteforce des 3 derniers caractères
+print("Bruteforce des caractères manquants...")
+for chars in itertools.product(string.printable, repeat=3):
+    # Construction de block1 avec les 3 caractères et le padding
+    block1 = ''.join(chars).encode('latin-1') + b'}' + b'\x80' + bytes(10)
+    
+    # Calcul de la partie connue de state_after_block0
+    state_part = strxor(state_before_perm[:15], block1)
+    
+    # Construction du candidat state_after_block0 complet
+    state_candidate = state_part + bytes([state_before_perm[15]])
+    
+    # Décryptage pour vérifier la structure
+    decrypted = cipher.decrypt(state_candidate)
+    
+    if decrypted.startswith(b'FLAG{') and decrypted[15] == 0:
+        # Extraction des parties du flag
+        known_part = decrypted[5:15].decode()
+        flag = f"FLAG{{{known_part}{''.join(chars)}}}"
+        print("\nFlag trouvé :", flag)
+        exit()
 
-            if block1_padded[15:] != b'\x00':
-                continue
-            
-            if block1_padded.startswith(prefix):
-                part1 = block1_padded[5:15].decode('ascii', errors='ignore')
-                part2 = (c1 + c2 + c3).decode('ascii', errors='ignore')
-                candidate = f"FLAG{{{part1}{part2}}}"
-                
-                if len(candidate) == 19:
-                    try:
-                        if custom_sponge(candidate.encode()) == target_hash[:15]:
-                            print(f"\n[SUCCESS] Flag found: {candidate}")
-                            return
-                    except:
-                        continue
-
-        sys.stdout.write(f"\rTesting: {c1+c2+c3}"), sys.stdout.flush()
-
-if __name__ == "__main__":
-    print("Starting brute force attack...")
-    crack_flag()
+print("Aucun flag valide trouvé")
