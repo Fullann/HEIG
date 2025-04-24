@@ -12,13 +12,17 @@ Flag trouvé : `FLAG{disengagement}`
 ### Partie 1 
 > Trouvez une erreur d’implémentation dans ce code. La fonction f dans le code est correcte et fait partie du standard. Elle permet de fixer une représentation des éléments. L’inverse de la fonction f est f elle-même.
 
-L'erreur principale se situe dans la fonction authenticate où la transformation f est appliquée deux fois de manière incorrecte :
-
-Sur chaque bloc de texte chiffré avant son traitement dans GHASH
-
-Sur le tag final après calcul
-
-Dans le standard GCM, les blocs de texte chiffré sont traités directement dans GHASH sans transformation préalable. L'application de f (qui est une conversion endianness) à ce stade introduit une divergence par rapport au standard.
+Erreur d'implémentation
+La fonction increaseCounter traite le compteur comme un entier 128 bits big-endian et l'incrémente globalement, alors que la spécification GCM impose de n'incrémenter que les 4 derniers octets (partie compteur) :
+```
+def increaseCounter(ctr):
+    ctr_int = int.from_bytes(ctr, "big")  # Conversion incorrecte
+    ctr_int += 1
+    return ctr_int.to_bytes(BLOCK_SIZE, "big")  # Réincrémentation globale
+```
+**Conséquences** :
+- Débordement du compteur dans la partie IV après 2^32 blocs
+- Incompatibilité avec le standard GCM lors du traitement de longs messages
 
 ### Partie 2
 >  Implémentez la déchiffrement GCM tout en conservant l’erreur d’implémentation. Testez votre implémentation.
@@ -42,6 +46,27 @@ Les deux messages partagent le même IV mais ont des tags différents. Ce compor
 
 ### Partie 4
 > Récupérez le texte clair correspondant au deuxième texte chiffré (iv2, c2, t2). Expliquez votre attaque dans votre rapport
+``` py
+import base64
+
+m1       = b'This is a Test !'
+iv1      = b'W5ZS9Yu3dEs3hDtB'
+c1       = b'2s9IB8rcQZh/Gljgb+WWQw=='
+t1       = b'MD4tYk+xhF1j58oX7m3AXA=='
+iv2      = b'W5ZS9Yu3dEs3hDtB'
+c2       = b'3sZSB8qIEtFqU2LgbvDEGw=='
+t2       = b'IajN3Q9omEsjsAS2nbg9SA=='
+mChall   = b'100.00CHF to ADC'
+
+def xor(data1, data2):
+	return bytes(a ^ b for a, b in zip(data1, data2))
+
+c1_xor_c2 = xor(base64.b64decode(c1), base64.b64decode(c2))
+m2 = xor(c1_xor_c2, m1)
+print(f"m2: {m2}")
+```
+
+m2: b'Pass = itinerary'
 
 ### Partie 5
 > Cassez aussi l’intégrité en fournissant un texte chiffré valide (iv, c, t) en base64 correspondant au message mChall que vous trouverez dans votre fichier de paramètres

@@ -1,0 +1,88 @@
+@startuml
+skinparam monochrome true
+skinparam defaultFontName Courier
+
+title **Construction Sponge AES-128 (Message:19 octets, Rate:15, Sortie:var)**
+
+rectangle "État Initial (0x00)" #F0F0F0 {
+    component "État (16 octets)" as state [
+        |= r=15  |= c=1  |
+        |=========|=====|
+        |00000000|0|
+    ]
+    note left
+        **Paramètres:**
+        - Taille état: 128 bits (16o)
+        - Rate (r): 15 octets
+        - Capacité (c): 1 octet
+        - Permutation: AES-128-ECB
+        - Clé: 070707... (16x0x07)
+        - Padding: ISO/IEC 7816-4
+    end note
+}
+
+frame "Phase de Padding" {
+    group "Message original: 19 octets ASCII" {
+        :Bloc 1 (15o): 30 31 32 33 34 35 36 37 38 39 30 31 32 33 34;
+        :Bloc 2 (4o): 35 36 37 38;
+    }
+    
+    note top
+        Calcul padding :
+        15 - (19 % 15) = 11 octets
+        → Ajout 0x80 + 10x0x00
+    end note
+    
+    group "Padding appliqué" {
+        :Bloc 2 complété: 35 36 37 38 **80 00 00 00 00 00 00 00 00 00 00**;
+    }
+    
+    :Message final: 2 blocs de 15o (30o);
+}
+
+frame "Absorption" {
+    loop 2 fois (par bloc) {
+        group "Traitement Bloc n" {
+            :XOR r premiers octets;
+            note right
+                state[0:15] = strxor(state[0:15], bloc)
+            end note
+            
+            :Application permutation AES;
+            note right
+                AES.encrypt(état complet)\navec clé fixe 0x07...
+            end note
+            
+            component "Nouvel État" [
+                |= r=15  |= c=1  |
+                |=========|=====|
+                |A7 D3 F1...|B2|
+            ]
+        }
+    }
+}
+
+frame "Squeezing" {
+    group "Boucle de génération" {
+        while (longueur sortie < taille requise) is (Non)
+            :Extraire r octets;
+            note right
+                hash += state[0:15]
+                Ex: 1ère extraction = 15o
+            end note
+            
+            :Appliquer permutation;
+        endwhile (Oui)
+    }
+    
+    :Troncature finale;
+    note left
+        Ex pour sortie 20 octets:
+        - 15o (1ère extraction)
+        - 15o (2ème extraction)
+        - Tronquer à 20o
+    end note
+}
+
+state --> "Phase de Padding"
+@enduml
