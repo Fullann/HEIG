@@ -5,7 +5,7 @@ import string
 import base64
 raw_bytes = base64.b64decode(b'zZFA10Jx7vH5g/liWgyzWfXCuiM7GOEEUtFNeeN64xq9Pa6SbjY9+nAbuE2JCjl7y69uO4zHRZTYmT2Yi925Ag==')
 hex_hash = raw_bytes.hex()
-# À remplacer par le hash réel du fichier de paramètres
+
 TARGET_HASH = bytes.fromhex(hex_hash) 
 
 H0 = TARGET_HASH[:15]
@@ -14,7 +14,6 @@ H1 = TARGET_HASH[15:]
 cipher = AES.new(b"\x07"*16, AES.MODE_ECB)
 
 ## Étape 1 : Trouver S_absorb en bruteforçant le 16ème byte
-print("Recherche de S_absorb...")
 S_absorb = None
 for x in range(256):
     candidate = H0 + bytes([x])
