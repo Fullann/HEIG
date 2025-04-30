@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>Liste des dictons</title></head>
+<body>
+    <h1>Dictons</h1>
+    <ul>
+        <% dictons.forEach(dicton => { %>
+            <li><a href="/<%= dicton.id %>"><%= dicton.dicton %></a></li>
+        <% }); %>
+    </ul>
+    <a href="/">Retour</a>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "cSpell.language": "en,fr",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.renderWhitespace": "all",
+  "editor.rulers": [80],
+  "files.insertFinalNewline": true,
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "markdown.extension.toc.levels": "2..3",
+  "markdownlint.config": {
+    "no-duplicate-heading": {
+      "siblings_only": true
+    },
+    "no-emphasis-as-heading": false,
+    "no-hard-tabs": false,
+    "no-inline-html": false
+  },
+  "prettier.printWidth": 80,
+  "prettier.proseWrap": "always",
+  "prettier.tabWidth": 2,
+  "prettier.useTabs": false
+}
