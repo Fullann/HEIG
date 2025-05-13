@@ -42,73 +42,74 @@ check_if_on_border:
         # TODO : Check if the current pixel is on the border of the image
         # when on border jump to copy_pixel else continue
 
-        movl    (x), %eax               # eax holds the x position
-        movl    (width), %ebx           # ebx holds the width of the image
+           movl    (x), %eax               # eax contient la position x
+        movl    (width), %ebx           # ebx contient la largeur de l'image
         decl    %ebx
 
-        cmpl    %eax, %ebx              # compare x and the width
-        je      copy_pixel              # skip this pixel if on the border
+        cmpl    %eax, %ebx              # comparer x avec la largeur
+        je      copy_pixel              # ignorer ce pixel s'il est en bordure droite
         
-        cmpl    $0, %eax                # compare x and 0
-        je      copy_pixel
+        cmpl    $0, %eax                # comparer x avec 0
+        je      copy_pixel              # ignorer ce pixel s'il est en bordure gauche
 
-        # same with y
+        # même chose pour y
         movl    (y), %eax
         movl    (height), %ebx            
         decl    %ebx
 
-        cmpl    %eax, %ebx
-        je      copy_pixel
+        cmpl    %eax, %ebx              # comparer y avec la hauteur
+        je      copy_pixel              # ignorer ce pixel s'il est en bordure inférieure
 
-        cmpl    $0, %eax
-        je      copy_pixel
+        cmpl    $0, %eax                # comparer y avec 0
+        je      copy_pixel              # ignorer ce pixel s'il est en bordure supérieure
+
 
 
 emboss_filter:
 
         # TODO : Implement the emboss 3D filter
-
-        # Copy pixel from esi to eax
+        # Copier le pixel de esi vers eax
         get_pixel x, y, width, %esi, %eax, %ebx
         
         subl    (width), %eax
-        decl    %eax                    # eax holds the upper leftmost pixel of the source image
+        decl    %eax                    # eax contient le pixel en haut à gauche de l'image source
 
         movl    $edge_detection_3x3, %edx
-        addl    $8, %edx                # edx holds the end of the kernel array
+        addl    $8, %edx                # edx pointe vers la fin du tableau du noyau (kernel)
 
-        movl    $0, (it)                # iterator
-        movl    $0, (res)               # accumulator
+        movl    $0, (it)                # itérateur
+        movl    $0, (res)               # accumulateur
 
-        xorl    %ebx, %ebx              # reset ebx
-        xorl    %ecx, %ecx              # reset ecx
+        xorl    %ebx, %ebx              # réinitialise ebx
+        xorl    %ecx, %ecx              # réinitialise ecx
 
         loop:
-                movzbl  (%eax), %ebx    # ebx holds the current pixel (uint8_t)
-                movsbl  (%edx), %ecx    # ecx holds the current kernel cell (int8_t)
-                imull   %ecx, %ebx      # compute current_pixel * current_kernel_cell
-                addl    %ebx, (res)     # add result in the accumulator res 
+                movzbl  (%eax), %ebx    # ebx contient le pixel courant (uint8_t)
+                movsbl  (%edx), %ecx    # ecx contient la cellule actuelle du noyau (int8_t)
+                imull   %ecx, %ebx      # calcule pixel_courant * cellule_noyau
+                addl    %ebx, (res)     # ajoute le résultat à l'accumulateur res 
 
                 cmpl    $2, (it)        
                 jne     1f
-                subl    $3, %eax        # get back to the start of the line
-                addl    (width), %eax   # get to the next line
+                subl    $3, %eax        # revenir au début de la ligne
+                addl    (width), %eax   # aller à la ligne suivante
                 
                 1:
                 cmpl    $5, (it)
                 jne     2f
-                subl    $3, %eax         # go back to the start of the line
-                addl    (width), %eax    # go to the next line
+                subl    $3, %eax         # revenir au début de la ligne
+                addl    (width), %eax    # aller à la ligne suivante
                 
                 2:
-                decl    %edx            # next kernel cell
-                incl    %eax            # next pixel
-                incl    (it)            # increment iterator
+                decl    %edx            # cellule suivante du noyau
+                incl    %eax            # pixel suivant
+                incl    (it)            # incrémenter l'itérateur
 
                 cmpl    $9, (it)
                 jne     loop
 
-        # - if acc < 0 : acc = -acc
+        # - si acc < 0 : acc = -acc
+
 
         cmpl    $0, (res)
         jge     1f
@@ -139,20 +140,21 @@ copy_pixel:
 
         # TODO : Copy pixel from source to destination image
 
-        # Copy pixel from esi to eax
+             # Copier le pixel de esi vers eax
         get_pixel x, y, width, %esi, %eax, %ebx
         
-        xorl     %ebx, %ebx              # reset the ebx register
+        xorl     %ebx, %ebx              # réinitialiser le registre ebx
 
-        # Copy pixel from edi to ebx
+        # Copier le pixel de edi vers ebx
         get_pixel x, y, width, %edi, %ebx, %ecx
 
-        xorl     %ecx, %ecx              # reset the ecx register
+        xorl     %ecx, %ecx              # réinitialiser le registre ecx
 
-        movl    (%eax), %ecx            # Copy the pixel from the source into a temporary register
-        movl    %ecx, (%ebx)            # Copy from the scratch register to the memory
+        movl    (%eax), %ecx            # Copier le pixel de la source dans un registre temporaire
+        movl    %ecx, (%ebx)            # Copier depuis le registre temporaire vers la mémoire
 
         jmp exit                        # exit
+
 
 .bss
         # Block Started by Symbol Section

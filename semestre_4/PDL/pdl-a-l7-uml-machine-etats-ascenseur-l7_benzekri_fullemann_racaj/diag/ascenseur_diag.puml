@@ -1,0 +1,43 @@
+@startuml Ascenseur
+[*] --> Fonctionnement_Normal
+
+state Fonctionnement_Normal {
+  [*] --> Arret
+
+  state Arret {
+    [*] --> Portes_Fermees
+
+    state Portes_Fermees {
+      [*] --> En_Attente : bouton «étage» pressé
+
+      En_Attente --> Portes_En_Ouverture : Bouton_«ouverture»
+      Portes_En_Ouverture --> Portes_Ouvertes : Fin d'ouverture
+      Portes_Ouvertes --> Portes_En_Fermeture : Timer 1 minute
+      Portes_Ouvertes --> Portes_En_Fermeture : Bouton_«étage»
+      Portes_Ouvertes --> Portes_En_Fermeture : Bouton_«fermeture»
+      Portes_En_Fermeture --> Portes_Fermees : Fin de fermeture
+      Portes_En_Fermeture --> Portes_En_Ouverture : Bouton_«ouverture»
+    }
+
+    Portes_Fermees --> Deplacement : bouton «étage» pressé
+  }
+
+  state Deplacement {
+    [*] --> En_Deplacement
+    En_Deplacement --> Arret : Arrivé à l'étage [capteur]
+  }
+
+  Fonctionnement_Normal --> Dysfonctionnement : Problème
+}
+
+state Dysfonctionnement {
+  [*] --> Blocage
+
+  Blocage --> Tentative_Reparation : bouton «étage»
+  Tentative_Reparation --> [*] : [réussite] / réparation
+  Tentative_Reparation --> Resolution_Manuelle : [échec]
+  Resolution_Manuelle --> Intervention_Manuelle : Bouton d'urgence
+  Intervention_Manuelle --> Fonctionnement_Normal : Réparation effectuée
+}
+
+@enduml
