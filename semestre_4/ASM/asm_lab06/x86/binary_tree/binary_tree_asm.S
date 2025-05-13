@@ -74,6 +74,7 @@ traverse_tree_asm:
                 movl    %ecx, %eax
 
                 jmp     while
+        end:
 	######## End of student code
         # Outro
         popal                           # Restore all register

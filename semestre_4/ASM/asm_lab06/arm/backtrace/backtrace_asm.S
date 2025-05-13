@@ -3,6 +3,7 @@
 
 @@ @brief void show_backtrace() prints the backtrace up to main()
 .global show_backtrace
+.equiv STACK_TOP, -1 
 show_backtrace:
         stmfd sp!, {fp, lr}
         add fp, sp, #4
