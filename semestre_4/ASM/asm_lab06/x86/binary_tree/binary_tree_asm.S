@@ -26,7 +26,7 @@ traverse_tree_asm:
         pushal                          # Save all registers
         movl  8(%ebp), %eax             # copy the argument in eax
 	####### Student code below
-	
+	movl    $0, %ebx
 
         # while root != null OR size != 0
         while:
