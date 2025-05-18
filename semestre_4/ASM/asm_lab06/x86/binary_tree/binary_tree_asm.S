@@ -27,9 +27,10 @@ traverse_tree_asm:
         movl  8(%ebp), %eax             # copy the argument in eax
 	####### Student code below
 	
-        # while root != null OU size != 0
+
+        # while root != null OR size != 0
         while:
-                cmpl    $0, %eax                # aller tout à gauche (tant que root ≠ null)
+                cmpl    $0, %eax               # aller tout à gauche (tant que root ≠ null)
                 jne     traverse_left           
 
                 cmpl    $0, %ebx                # la pile est-elle vide ?
@@ -38,14 +39,14 @@ traverse_tree_asm:
                 cmpl    $0, %eax                # s'il n'y a plus de nœud à gauche, tenter de traverser à droite
                 je      traverse_right
 
-                pushl   %eax                    # empiler le nœud courant (visiter)
+                pushl   %eax                    # empiler le nœud courant
                 incl    %ebx                    # augmenter la taille de la pile
 
                 movl    0x8(%eax), %ecx         # aller vers le fils gauche
                 movl    %ecx, %eax
                 jmp     traverse_left
         traverse_right:
-                popl    %eax                    # revenir d’un niveau (backtrack) et afficher le nœud
+                popl    %eax                    # revenir d’un niveau et afficher le nœud
                 decl    %ebx                    # diminuer la taille de la pile
 
                 movl    0x4(%eax), %ecx         # afficher la valeur du nœud
@@ -56,7 +57,6 @@ traverse_tree_asm:
 
                 jmp     while
         end:
-
 	######## End of student code
         # Outro
         popal                           # Restore all register
