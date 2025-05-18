@@ -13,23 +13,23 @@ show_backtrace:
         ldr r0, =backtrace_string
         bl printf
 
-        mov     r2, fp                          @ save frame pointer
+         mov     r2, fp                          @ sauvegarder le frame pointer dans r2
 
         while:
-                ldr     r1, [r2]                @ read address of the frame pointer (link register)
+                ldr     r1, [r2]                @ lire l'adresse du frame pointer (registre de liaison)
 
-                cmp     r1, #STACK_TOP          @ compare the linked register with the stack top
-                beq     end                     @ if equal, end the loop
+                cmp     r1, #STACK_TOP          @ comparer le registre de liaison avec le sommet de la pile
+                beq     end                     @ si égal, terminer la boucle
 
-                stmfd   sp!, {r2}               @ save r2 in the stack
-                ldr     r0, =format_string
-                bl      printf                  
-                ldmfd   sp!, {r2}               @ restore the value of r2
+                stmfd   sp!, {r2}               @ sauvegarder r2 sur la pile
+                ldr     r0, =format_string      @ charger l'adresse de la chaîne de format
+                bl      printf                  @ appeler la fonction printf
+                ldmfd   sp!, {r2}               @ restaurer la valeur de r2 depuis la pile
                 
-                ldr     r2, [r2, #-4]           @ get the previous link register
-                cmp     r2, #STACK_TOP          @ compare the linked register with the stack top
+                ldr     r2, [r2, #-4]           @ obtenir le registre de liaison précédent
+                cmp     r2, #STACK_TOP          @ comparer avec le sommet de la pile
 
-                bne     while                   @ if not equal, loop
+                bne     while                   @ si différent, continuer la boucle
         
         end:
 

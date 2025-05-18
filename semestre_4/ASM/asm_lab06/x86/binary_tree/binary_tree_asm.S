@@ -27,54 +27,36 @@ traverse_tree_asm:
         movl  8(%ebp), %eax             # copy the argument in eax
 	####### Student code below
 	
-        # eax = root
-        # eax + 4 = root.data
-        # eax + 8 = root.left
-        # eax + c = root.right
-
-        # ebx = stack size 
-
-        movl    $0, %ebx
-
-        # Iterative preorder traversal
-        # p <- root
-        # while p != NULL or stack is not empty:
-        #       while p != null:
-        #               stack_push(p)
-        #               p = p.left
-        #       p = stack_pop()
-        #       p <- p.right
-        # reference: https://faculty.cs.niu.edu/~mcmahon/CS241/Notes/Data_Structures/binary_tree_traversals.html
-
-        # while root != null OR size != 0
+        # while root != null OU size != 0
         while:
-                cmpl    $0, %eax                # go all the way to the left
+                cmpl    $0, %eax                # aller tout à gauche (tant que root ≠ null)
                 jne     traverse_left           
 
-                cmpl    $0, %ebx                # stack empty ?
+                cmpl    $0, %ebx                # la pile est-elle vide ?
                 je      end
         traverse_left:
-                cmpl    $0, %eax                # if there's nothing left then try to traverse to the right
+                cmpl    $0, %eax                # s'il n'y a plus de nœud à gauche, tenter de traverser à droite
                 je      traverse_right
 
-                pushl   %eax                    # push the current node (visit)
-                incl    %ebx                    # increase stack size
+                pushl   %eax                    # empiler le nœud courant (visiter)
+                incl    %ebx                    # augmenter la taille de la pile
 
-                movl    0x8(%eax), %ecx         # move to the left
+                movl    0x8(%eax), %ecx         # aller vers le fils gauche
                 movl    %ecx, %eax
                 jmp     traverse_left
         traverse_right:
-                popl    %eax                    # backtrack one level and print the node
-                decl    %ebx                    # decrease stack size
+                popl    %eax                    # revenir d’un niveau (backtrack) et afficher le nœud
+                decl    %ebx                    # diminuer la taille de la pile
 
-                movl    0x4(%eax), %ecx         # print the node
+                movl    0x4(%eax), %ecx         # afficher la valeur du nœud
                 PUT_S   %ecx   
 
-                movl    0xc(%eax), %ecx         # move to the right
+                movl    0xc(%eax), %ecx         # aller vers le fils droit
                 movl    %ecx, %eax
 
                 jmp     while
         end:
+
 	######## End of student code
         # Outro
         popal                           # Restore all register
