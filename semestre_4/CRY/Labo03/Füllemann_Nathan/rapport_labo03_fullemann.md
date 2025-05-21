@@ -36,15 +36,87 @@ chiffré complet (avec nonce et tag). Tout est en base64. Donnez dans votre rapp
 récupéré ainsi qu’une explication de votre attaque. (1 pt)
 6. Corrigez l’erreur dans la construction. (0.2 pts)
 ### Réponses
+1) Schéma de la construction
 
+2) Description mathématique
+   1) **Paramètres publics et secrets**
+   On utilise une **courbe elliptique** $E/\mathbb{F}_p$, définie par cette équation:
+$$
+E: y^2 = x^3 + ax + b \quad \text{sur} \quad \mathbb{F}_p
+$$
+Avec :
+      * $p \in \mathbb{N}$ : un nombre premier
+      * $a, b \in \mathbb{F}_p$
+      * $G \in E(\mathbb{F}_p)$ : un générateur d'ordre $n$
+      * $n \in \mathbb{N}$ : l’ordre du point $G$
+  
+   1) **Génération de clé**
+   Chaque utilisateur choisit :
+      * Une **clé privée** $a \in \mathbb{Z}_n$
+      * Une **clé publique** $A = aG \in E(\mathbb{F}_p)$
+   2) **Chiffrement**
+Pour chiffrer un message $M \in \{0,1\}^*$ (des octets), l'algorithme suis ses étapes :
+      1. **Choix aléatoire** : $r \in \mathbb{Z}_n$
+      2. **Calcul du point partagé (ECDH)** :
+      $$
+      P = rA = r(aG) = arG \in E(\mathbb{F}_p)
+      $$
+      3. **Compression du point** $P$, puis dérivation d'une **clé symétrique** $k$ à partir de $P$ :
+      $$
+      k = \text{HKDF}(\text{compress}(P), \text{len}=32)
+      $$
+      4. **Chiffrement AES-GCM** :
+      $$
+      \text{AES-GCM}_k(M) = (\text{nonce}, C, \text{tag})
+      $$
+      5. L’expéditeur envoie :
+      $$
+      \text{C} = (R, \text{nonce}, C, \text{tag})
+      $$
+      où $R = rG \in E(\mathbb{F}_p)$ est la **clé publique éphémère** (compressée).
+   1) **Déchiffrement**
+        Le destinataire, possédant la clé privée $a$, reçoit $R = rG$ et :
+        1. **Recalcule le point partagé** :
+        $$
+        P = aR = a(rG) = arG
+        $$
+        2. **Dérive la clé symétrique** :
+        $$
+        k = \text{HKDF}(\text{compress}(P), \text{len}=32)
+        $$
+        3. **Déchiffre avec AES-GCM** :
+        $$
+        M = \text{AES-GCM}_k^{-1}(\text{nonce}, C, \text{tag})
+        $$
+3) Implémentation du déchiffrement
+   ```
+   Paramètres de la courbe elliptique
+    - Générateur G : (34736706601617260336801089627448256371787243214661931571076381713565253696521 : 5887497935320424287803691270199037907654978138532428031269063384390017951571 : 1)
+    - Ordre n       : 2550513000803
+    - Equation      : Elliptic Curve defined by y^2 = x^3 + 43327883319811199442996705732365163443043431995328598938729525921048235234958*x + 45494814375791703888029144132071347443317277861841182091738819980027414195528 over Finite Field of size 50043062554237280172405801360375653460619548838234052036762494431728976610313
 
+    Clés de Bob
+    - Clé privée a  : 963178213981
+    - Clé publique A: (13976030234605413735643637033165381524432614984208610805756637485647500884502 : 35824549147280859880677490714451853472127394838790221812639000505508885181579 : 1)
+
+   Message clair à chiffrer : Crypto
+
+    Chiffrement par Alice
+    - Point éphémère R (compressé) : 0224f3b266d0b8f75a2db2dfd7b07b92ed5d8bf089a7080de13222d7f69db25c59
+    - Nonce AES                    : f2583519a4ed55affd03e5195006959d
+    - Ciphertext                   : fdbef7e54cf0
+    - Tag                          : ec216a1b8127eb3d9ee16b6a5c405357
+    - Message déchiffré : Crypto
+
+   Le message envoyé de Bob et celui d'Alice sont les même  
+   ```
 ---
 ## Exercice 3 - RSA (1pt)
 ### Donnée
 Vous trouverez dans le fichier rsa.sage une implémentation de textbook RSA.
 1. Implémentez le déchiffrement. Testez votre code et montrez votre test dans votre rapport. (0.5
 pts)
-2. Cassez la construction. Vous trouverez dans votre fichier de paramètres la clef publique et un texte
+1. Cassez la construction. Vous trouverez dans votre fichier de paramètres la clef publique et un texte
 chiffré complet. Le texte chiffré est en base64. Donnez dans votre rapport le message récupéré ainsi
 qu’une explication de votre attaque. (0.5 pts)
 

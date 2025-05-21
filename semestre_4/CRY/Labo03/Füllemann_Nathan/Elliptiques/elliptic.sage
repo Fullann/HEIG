@@ -61,3 +61,57 @@ def encrypt(A, M, G, n):
     ciphertext, tag = cipher.encrypt_and_digest(M)
     return (serialize_point_compressed(r*G), (cipher.nonce, ciphertext, tag))
 
+def decrypt(a, R_bytes, data, E):
+    """
+    a : clé privée du destinataire (int)
+    R_bytes : point compressé rG (bytes)
+    data : tuple (nonce, ciphertext, tag)
+    E : courbe elliptique
+    """
+    R = deserialize_point_compressed(R_bytes, E)
+    P = a * R  # point partagé
+    k = HKDF(serialize_point_compressed(P), 32, b"", SHA256, num_keys=1)
+    nonce, ciphertext, tag = data
+    cipher = AES.new(k, AES.MODE_GCM, nonce=nonce)
+    M = cipher.decrypt_and_verify(ciphertext, tag)
+    return M
+
+G, E, n = params()
+
+# Initialisation des paramètres de la courbe
+G, E, n = params()
+print("Paramètres de la courbe elliptique")
+print(" - Générateur G :", G)
+print(" - Ordre n       :", n)
+print(" - Equation      :", E)
+
+# Génération de la clé (Bob)
+a, A = keyGen(G, n)
+print("\n Clés de Bob")
+print(" - Clé privée a  :", a)
+print(" - Clé publique A:", A)
+
+# Message à chiffrer
+message = b"Crypto"
+print("\nMessage clair à chiffrer :", message.decode())
+
+# Chiffrement (Alice envoie un message à Bob)
+R_bytes, data = encrypt(A, message, G, n)
+nonce, ciphertext, tag = data
+
+print("\n Chiffrement par Alice")
+print(" - Point éphémère R (compressé) :", R_bytes.hex())
+print(" - Nonce AES                    :", nonce.hex())
+print(" - Ciphertext                   :", ciphertext.hex())
+print(" - Tag                          :", tag.hex())
+
+# Déchiffrement (Bob)
+message_dechiffre = decrypt(a, R_bytes, data, E)
+print(" - Message déchiffré :", message_dechiffre.decode())
+
+# 6. Vérification
+if message_dechiffre == message:
+    print("\nLe message envoyé de Bob et celui d'Alice sont les même  ")
+else:
+    print("\n❌ Err")
+
