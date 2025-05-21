@@ -13,11 +13,8 @@ def fermat_factorize(n):
     Returns:
         (p, q) les deux facteurs de n
     """
-    print("Début de la factorisation de Fermat...")
-    # Convertir n en entier Python standard pour éviter les problèmes de compatibilité
     n = int(n)
     
-    # Utiliser la fonction de racine carrée de la bibliothèque math
     a = math.isqrt(n)  # Partie entière de la racine carrée de n
     
     if a * a == n:
@@ -33,7 +30,7 @@ def fermat_factorize(n):
             p = a + b
             q = a - b
             print(f"Factorisation trouvée! p = {p}, q = {q}")
-            return int(p), int(q)  # Convertir explicitement en entiers Python
+            return int(p), int(q)
         
         a += 1
         
@@ -43,7 +40,6 @@ def fermat_factorize(n):
 
 # Fonction pour reconstruire la clé privée à partir de la clé publique et des facteurs p et q
 def reconstruct_private_key(public_key, p, q):
-    # Convertir explicitement en entiers Python standards
     p = int(p)
     q = int(q)
     n = p * q
@@ -54,13 +50,10 @@ def reconstruct_private_key(public_key, p, q):
     # Reconstruire la clé privée RSA
     return RSA.construct((int(n), int(e), int(d)), consistency_check=True)
 
-# On suppose que vous avez ces valeurs
-# key contient la clé publique au format PEM
 key = b'''-----BEGIN PUBLIC KEY-----
 MIIBKDANBgkqhkiG9w0BAQEFAAOCARUAMIIBEAKCAQcAhA3tDaT+HkcZNdvKksXP\nZYvyuuy65/ZE0rlB4dAPYoZx4Jz65ZL+4w7MmxYN4YjIGPY/sCNOT+55OFMX8GlZ\nWt+XD5ex3df6LY5AyrK+G44j4p2Jo9Ns2QDd2rRqsWpoUXe2hkVsfONqnxZqy5gV\nduaMFxMy1tfhY+9OF6Lnn1Wq1KOj2w18bszIsyx7r8dHCQ0O9I1ApeOcNeoZgl0C\n1fHly31rBYOX0qxhAsSJ8fAmzsD1R56mRVP/1h3xM+DlEyRk1mD/DgGs+6V6nTdh\nJCyMNoLktsbP3pFYpapykg+9PQJ9oNLKA6Vbqgvxe64Vl35Oj0mQEbs35Y9Nex3A\n3xgcsUsj/wIDAQAB
 -----END PUBLIC KEY-----'''
 
-# c contient le texte chiffré en base64
 c = b'aJ7wR9164ROn+hxgyzh5xawPxILcz73t6KzLKZ9OxUBfqdxCBZ44a+tK2Fx1kv1vuHiCxyrPTrj7X2n0kLT0v5g6EZhzD9lrZLrjYGod5HJVboYStIVi6FRljYIus41TtvbgzFX72m9aIKdu9RQr5V/Du+Wxo/wfgL4xequ+cjyO9+2CIhfUZqXFHOdF9mTvHWmG2OiXRaiIPN4GBkLS9iFGmiP+d0dcjFtjABkrqRK5TQbTHeZ9+vG0tt1QbAlhZEs1hluQTwp4UqsbkC85EoQ1A8n+Xm2VG6BMl0Q4oIY55YThunnW2Dgy4AXuQB5Extqx8VMANo1IH9wL5tnSib0cm4mHQA=='
 
 # Charger la clé publique
