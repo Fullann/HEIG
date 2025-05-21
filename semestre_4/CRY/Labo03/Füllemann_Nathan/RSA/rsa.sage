@@ -39,14 +39,13 @@ def test_rsa():
     
     # Génération de la paire de clés
     key = keygen()
-    
     # Message à chiffrer
     message = b"Crypto"
     print(f"Message original: {message}")
     
     # Chiffrement
     ciphertext = encrypt(message, key)
-    print(f"Message chiffré (format hex): {ciphertext.hex()[:64]}...")
+    print(f"Message chiffré : {ciphertext.hex()[:64]}...")
     
     # Déchiffrement
     decrypted = decrypt(ciphertext, key)

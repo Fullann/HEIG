@@ -49,3 +49,17 @@ chiffré complet. Le texte chiffré est en base64. Donnez dans votre rapport le 
 qu’une explication de votre attaque. (0.5 pts)
 
 ### Réponses
+1) Implementation du decode RSA
+```
+Test du système RSA:
+Message original: b'Crypto'
+Message chiffré: 0e3efc03db1255b4619b7160994c39581fa270ce33a2316a671a3bc0c299eb1f...
+Message déchiffré: b'Crypto'
+```
+
+2) Cassage de la construction
+#### Cassage de la construction
+On peut voir que cette ligne est problematique ```q = next_prime(p + ZZ.random_element(2^15))```. Car en temps normal dans la génération d'une clés RSA **p** et **q** ne sont pas en relation. Ici **q** depend de **p** et donc cela réduis l'espace de recherche pour un attaquant qui tenterait de factoriser n. Car au lieu de chercher parmi tous les nombres premiers possibles, il va le faire uniquement sur ceux qui sont proches de la racine carrée de n dans l'intervalle 2^15.
+
+#### Résultat
+Message déchiffré : **What is your quest? To seek the holy grail. What is your favorite color? waiving**
