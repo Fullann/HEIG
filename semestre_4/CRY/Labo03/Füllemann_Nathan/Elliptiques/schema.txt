@@ -59,3 +59,4 @@ AES-GCM assure confidentialité + intégrité du message.
 
 La clé publique éphémère rG est compressée avant transmission pour économiser de l’espace.
 
+    
