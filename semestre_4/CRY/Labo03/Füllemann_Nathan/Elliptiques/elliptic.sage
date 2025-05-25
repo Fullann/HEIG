@@ -113,5 +113,5 @@ print(" - Message déchiffré :", message_dechiffre.decode())
 if message_dechiffre == message:
     print("\nLe message envoyé de Bob et celui d'Alice sont les même  ")
 else:
-    print("\n❌ Err")
+    print("\n Err")
 

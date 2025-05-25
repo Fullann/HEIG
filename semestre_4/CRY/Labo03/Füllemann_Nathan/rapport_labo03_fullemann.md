@@ -17,14 +17,10 @@ Indice : Visualisez ces racines dans Zp × Zq et effectuez des opérations sur c
 d’obtenir un multiple de p ou de q.
 5. Sur quel problème difficile est basé cette construction ? (0.1 pt)
 6. A quoi sert la redondance dans la construction (variable REDUNDANCY) ? (0.2 pts)
-## Réponses
+### Réponses
 1) Schema de l'algorithme
    
 2) Description mathématique
-### 🔒 Chiffrement
-
-Soit :
-
 * $n = pq$, où $p \equiv q \equiv 3 \mod 4$ sont deux grands nombres premiers,
 * $m \in \{0,1\}^*$ le message en clair (de taille limitée),
 * $r \in_R \{0,1\}^{128 \cdot 8}$ une chaîne aléatoire de 128 octets,
@@ -45,14 +41,14 @@ Soit :
 
 4. **Chiffrement :**
    $c = x^2 \mod n$
-3) Déchiffrement
+5) Déchiffrement
 ```bash
 message chiffrer 4797148059281529151495676506019336499464708436785113748063530450732414481910008224707369356073621842177629480469407532919011276074309454798348097723927551868931234469946810459479631141738406546806325885434152122243782147978292290291687261051811081721171744941664530668184818675442858940482085412097854925131937806027795295848578623280899134920297302485946270035823082851444966566051043336156924679108833832882130655444003315796213567400873910689962479856374717408566335203345459495463096924671485957903564365579619235635722100831129105001249814555747800201088091780586779655220053654642805809340642855002832234386705
 Message original : b'Crypto'
 Message déchiffré : b'Crypto'
 Succès : True
 ```
-4) Crackage de l'algorithme
+1) Crackage de l'algorithme
    1) Cassage de l'algorithme
    
    En connaissant les 4 racines carrées $r_1, r_2, r_3, r_4$ d’un même message chiffré $c$, on peut factoriser $n$ en exploitant le fait que :
@@ -75,10 +71,10 @@ Succès : True
    Facteurs récupérés : p = 165527578793874775288637020134360874828287960545808881015503547430743992512185022046154882144120894948748692714168867874056900947085017148379777857236454071168518109382923294809412723291436760492193302946115214232181484394963264815599872596866716045202444484303370094099885997741978603541401937724171469351287, q = 151454526570491640123745343356079546942489923225137567709201369042178064633128913941609018141463041177517168901467680700472427469466049668791084679886130740036494968497881663299556130588091177886494119170940628249190959995538363602544627503352168620331766413607101622605419905721240043982894884925519168755811
    Message challenge déchiffré : b'Ni! Ni! Ni! We want a adenoidal'
    ```
-5) Le problème difficile
+2) Le problème difficile
 Le problème difficile est la difficulté de factoriser un grand entier n = p*q où p et q sont des très grand nombre premier et $p \equiv q \equiv 3 \mod 4$.
 
-6) La redondance dans la construction
+1) La redondance dans la construction
 Dans ce bout de code 
 ```py
 if len(m) > BYTE_LEN_MESSAGE_PART - REDUNDANCY - 1:
@@ -90,8 +86,7 @@ On peut trouver le paramètre **REDUNDANCY**
 ---
 ## Exercice 2 - Courbes Elliptiques (2 pts)
 ### Donnée
-Vous trouverez dans le fichier elliptic.sage un algorithme de chiffrement asymétrique basé sur les
-courbes elliptiques.
+Vous trouverez dans le fichier elliptic.sage un algorithme de chiffrement asymétrique basé sur les courbes elliptiques.
 1. Dessinez un schéma correspondant à cet algorithme. (0.2 pts)
 2. Donnez une description mathématique du chiffrement et du déchiffrement correspondant.
 (0.2 pts)
@@ -178,9 +173,16 @@ Pour chiffrer un message $M \in \{0,1\}^*$ (des octets), l'algorithme suis ses �
    Le message envoyé de Bob et celui d'Alice sont les même  
    ```
 4) Problème de l'algorithme
-   
+   Ici le problème est que n est un nombre beaucoup trop petit
+   $$ (2550513000803 \approx 2^{42})$$ Donc grace au logarithme discret on pourra casser très facillement la construction.
 5) Cassage de la construction
+   1) Explication
+   Le code commence par vérifier que les points A (clé publique) et rG (point éphémère) appartiennent bien à la courbe elliptique. Ensuite la fonction *solve_discrete_log()* calcule la clé privée a en utilisant le fait que n est trop petit et en utilisant les logarithme discret. Puis on calcul le secret partagé
+   $$ rA = a * rG$$  Puis on dérivation de la clé AES avec HKDF et on fini par décrypter avec AES-GCM avec tous les paramètres qu'on possède.
 
+   2) Résultat
+      Clé privée récupérée: **2248123502064**
+      Message déchiffré : **Nobody expects the spanish inquisition ! Our chief weapon is rechecked**
 6) Correction de l'erreur
 ---
 ## Exercice 3 - RSA (1pt)
