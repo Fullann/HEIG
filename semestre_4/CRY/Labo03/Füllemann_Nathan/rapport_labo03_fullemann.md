@@ -1,3 +1,12 @@
+---
+title: "rapport_labo03_fullemann"
+author: "Nathan Füllemann"
+date: \today
+geometry: margin=2.5cm
+fontsize: 11pt
+numbersections: true
+---
+
 # Rapport_CRY_labo03 - Nathan Füllemann
 ## Exercice 1 - “Encryption” (2 pts)
 ### Donnée
@@ -19,37 +28,37 @@ d’obtenir un multiple de p ou de q.
 6. A quoi sert la redondance dans la construction (variable REDUNDANCY) ? (0.2 pts)
 ### Réponses
 1) Schema de l'algorithme
-   
+   ![Schema encryption](./Encryption/schema.png)
 2) Description mathématique
-* $n = pq$, où $p \equiv q \equiv 3 \mod 4$ sont deux grands nombres premiers,
-* $m \in \{0,1\}^*$ le message en clair (de taille limitée),
-* $r \in_R \{0,1\}^{128 \cdot 8}$ une chaîne aléatoire de 128 octets,
-* $\text{MGF}(r, \ell)$ une fonction de masquage déterministe basée sur $r$ et de longueur $\ell$,
-* $\text{pad}(m)$ le message avec un padding ISO/IEC 7816-4, qui ajoute un octet `0x80` suivi de `0x00` jusqu'à atteindre la taille cible.
+   * $n = pq$, où $p \equiv q \equiv 3 \mod 4$ sont deux grands nombres premiers,
+   * $m \in \{0,1\}^*$ le message en clair,
+   * $r \in_R \{0,1\}^{128 \cdot 8}$ une chaîne aléatoire de 128 octets,
+   * $\text{MGF}(r, \ell)$ une fonction de masquage déterministe basée sur $r$ et de longueur $\ell$,
+   * $\text{pad}(m)$ le message avec un padding qui ajoute un octet `0x80` suivi de `0x00` jusqu'à atteindre la taille cible.
 
-**Étapes mathématiques** :
+   **Étapes mathématiques** :
 
-1. **Padding :**
-   $m_{\text{pad}} = \text{pad}(m) \in \{0,1\}^{\ell}$
+   1. **Padding :**
+      $m_{\text{pad}} = \text{pad}(m) \in \{0,1\}^{\ell}$
 
-2. **Masquage :**
-   $h = \text{MGF}(r, \ell)$
-   $m' = m_{\text{pad}} \oplus h$
+   2. **Masquage :**
+      $h = \text{MGF}(r, \ell)$
+      $m' = m_{\text{pad}} \oplus h$
 
-3. **Concaténation :**
-   $x = \text{bytes\_to\_int}(m' \Vert r) \in \mathbb{Z}_n$
+   3. **Concaténation :**
+      $x = \text{bytes\_to\_int}(m' \Vert r) \in \mathbb{Z}_n$
 
-4. **Chiffrement :**
-   $c = x^2 \mod n$
-5) Déchiffrement
+   4. **Chiffrement :**
+      $c = x^2 \mod n$
+3) Déchiffrement
 ```bash
 message chiffrer 4797148059281529151495676506019336499464708436785113748063530450732414481910008224707369356073621842177629480469407532919011276074309454798348097723927551868931234469946810459479631141738406546806325885434152122243782147978292290291687261051811081721171744941664530668184818675442858940482085412097854925131937806027795295848578623280899134920297302485946270035823082851444966566051043336156924679108833832882130655444003315796213567400873910689962479856374717408566335203345459495463096924671485957903564365579619235635722100831129105001249814555747800201088091780586779655220053654642805809340642855002832234386705
 Message original : b'Crypto'
 Message déchiffré : b'Crypto'
 Succès : True
 ```
-1) Crackage de l'algorithme
-   1) Cassage de l'algorithme
+1) Cassage
+   1) L'algorithme
    
    En connaissant les 4 racines carrées $r_1, r_2, r_3, r_4$ d’un même message chiffré $c$, on peut factoriser $n$ en exploitant le fait que :
 
@@ -62,13 +71,16 @@ Succès : True
    $$
    \gcd(r_1 - r_2, n) = p \quad \text{ou} \quad q
    $$
-   Donc contrairement au chiffrement Rabin qui évite ceci mon attaque se base sur les 4 racines et une fois $p$ et $q$ obtenus, on peut déchiffrer n’importe quel message chiffré avec $n$.
+   Mon attaque se base sur les 4 racines et une fois $p$ et $q$ obtenus, on peut déchiffrer n’importe quel message chiffré avec $n$.
 
-   2) Résulatat
+   2) Résultat
    ```bash
-   Facteurs récupérés : p = 165527578793874775288637020134360874828287960545808881015503547430743992512185022046154882144120894948748692714168867874056900947085017148379777857236454071168518109382923294809412723291436760492193302946115214232181484394963264815599872596866716045202444484303370094099885997741978603541401937724171469351287, q = 151454526570491640123745343356079546942489923225137567709201369042178064633128913941609018141463041177517168901467680700472427469466049668791084679886130740036494968497881663299556130588091177886494119170940628249190959995538363602544627503352168620331766413607101622605419905721240043982894884925519168755811
-   Facteurs récupérés : p = 151454526570491640123745343356079546942489923225137567709201369042178064633128913941609018141463041177517168901467680700472427469466049668791084679886130740036494968497881663299556130588091177886494119170940628249190959995538363602544627503352168620331766413607101622605419905721240043982894884925519168755811, q = 165527578793874775288637020134360874828287960545808881015503547430743992512185022046154882144120894948748692714168867874056900947085017148379777857236454071168518109382923294809412723291436760492193302946115214232181484394963264815599872596866716045202444484303370094099885997741978603541401937724171469351287
-   Facteurs récupérés : p = 165527578793874775288637020134360874828287960545808881015503547430743992512185022046154882144120894948748692714168867874056900947085017148379777857236454071168518109382923294809412723291436760492193302946115214232181484394963264815599872596866716045202444484303370094099885997741978603541401937724171469351287, q = 151454526570491640123745343356079546942489923225137567709201369042178064633128913941609018141463041177517168901467680700472427469466049668791084679886130740036494968497881663299556130588091177886494119170940628249190959995538363602544627503352168620331766413607101622605419905721240043982894884925519168755811
+   Facteurs récupérés : p = 165527578793874775288637020134360874828287960545808881015503547430743992512185022046154882144120894948748692714168867874056900947085017148379777857236454071168518109382923294809412723291436760492193302946115214232181484394963264815599872596866716045202444484303370094099885997741978603541401937724171469351287, 
+   q = 151454526570491640123745343356079546942489923225137567709201369042178064633128913941609018141463041177517168901467680700472427469466049668791084679886130740036494968497881663299556130588091177886494119170940628249190959995538363602544627503352168620331766413607101622605419905721240043982894884925519168755811
+   Facteurs récupérés : p = 151454526570491640123745343356079546942489923225137567709201369042178064633128913941609018141463041177517168901467680700472427469466049668791084679886130740036494968497881663299556130588091177886494119170940628249190959995538363602544627503352168620331766413607101622605419905721240043982894884925519168755811, 
+   q = 165527578793874775288637020134360874828287960545808881015503547430743992512185022046154882144120894948748692714168867874056900947085017148379777857236454071168518109382923294809412723291436760492193302946115214232181484394963264815599872596866716045202444484303370094099885997741978603541401937724171469351287
+   Facteurs récupérés : p = 165527578793874775288637020134360874828287960545808881015503547430743992512185022046154882144120894948748692714168867874056900947085017148379777857236454071168518109382923294809412723291436760492193302946115214232181484394963264815599872596866716045202444484303370094099885997741978603541401937724171469351287, 
+   q = 151454526570491640123745343356079546942489923225137567709201369042178064633128913941609018141463041177517168901467680700472427469466049668791084679886130740036494968497881663299556130588091177886494119170940628249190959995538363602544627503352168620331766413607101622605419905721240043982894884925519168755811
    Message challenge déchiffré : b'Ni! Ni! Ni! We want a adenoidal'
    ```
 2) Le problème difficile
@@ -80,10 +92,8 @@ Dans ce bout de code
 if len(m) > BYTE_LEN_MESSAGE_PART - REDUNDANCY - 1:
     raise Exception("Message too long.")
 ```
-On peut trouver le paramètre **REDUNDANCY**
+On peut trouver le paramètre **REDUNDANCY** qui est set a 10 au début du code. Ici on nous indique qu'il y a 10 octets de redondance qui permette au padding de créer une structure reconnaissable qui élimine les "fausses" racines. Car par exemple si c'était pas implémenté on pourrait choisir un chiffré **c=x^2 mod n** où il connaît x puis obtenir les 4 racines possibles via la méthode de dechiffrement et ainsi exploiter cette information pour factoriser n. Donc les 10 octets de redondance permette que la probabilité qu'une racine incorrecte passe la validation soit négligeable.
 
-
----
 ## Exercice 2 - Courbes Elliptiques (2 pts)
 ### Donnée
 Vous trouverez dans le fichier elliptic.sage un algorithme de chiffrement asymétrique basé sur les courbes elliptiques.
@@ -99,7 +109,7 @@ récupéré ainsi qu’une explication de votre attaque. (1 pt)
 6. Corrigez l’erreur dans la construction. (0.2 pts)
 ### Réponses
 1) Schéma de la construction
-
+![Schema Elliptiques](./Elliptiques/schema.png).
 2) Description mathématique
    1) **Paramètres publics et secrets**
    On utilise une **courbe elliptique** $E/\mathbb{F}_p$, définie par cette équation:
@@ -112,11 +122,11 @@ récupéré ainsi qu’une explication de votre attaque. (1 pt)
       * $G \in E(\mathbb{F}_p)$ : un générateur d'ordre $n$
       * $n \in \mathbb{N}$ : l’ordre du point $G$
   
-   1) **Génération de clé**
+   2) **Génération de clé**
    Chaque utilisateur choisit :
       * Une **clé privée** $a \in \mathbb{Z}_n$
       * Une **clé publique** $A = aG \in E(\mathbb{F}_p)$
-   2) **Chiffrement**
+   3) **Chiffrement**
 Pour chiffrer un message $M \in \{0,1\}^*$ (des octets), l'algorithme suis ses étapes :
       1. **Choix aléatoire** : $r \in \mathbb{Z}_n$
       2. **Calcul du point partagé (ECDH)** :
@@ -136,7 +146,7 @@ Pour chiffrer un message $M \in \{0,1\}^*$ (des octets), l'algorithme suis ses �
       \text{C} = (R, \text{nonce}, C, \text{tag})
       $$
       où $R = rG \in E(\mathbb{F}_p)$ est la **clé publique éphémère** (compressée).
-   1) **Déchiffrement**
+   4) **Déchiffrement**
         Le destinataire, possédant la clé privée $a$, reçoit $R = rG$ et :
         1. **Recalcule le point partagé** :
         $$
@@ -164,7 +174,7 @@ Pour chiffrer un message $M \in \{0,1\}^*$ (des octets), l'algorithme suis ses �
    Message clair à chiffrer : Crypto
 
     Chiffrement par Alice
-    - Point éphémère R (compressé) : 0224f3b266d0b8f75a2db2dfd7b07b92ed5d8bf089a7080de13222d7f69db25c59
+    - Point éphémère R : 0224f3b266d0b8f75a2db2dfd7b07b92ed5d8bf089a7080de13222d7f69db25c59
     - Nonce AES                    : f2583519a4ed55affd03e5195006959d
     - Ciphertext                   : fdbef7e54cf0
     - Tag                          : ec216a1b8127eb3d9ee16b6a5c405357
@@ -184,7 +194,8 @@ Pour chiffrer un message $M \in \{0,1\}^*$ (des octets), l'algorithme suis ses �
       Clé privée récupérée: **2248123502064**
       Message déchiffré : **Nobody expects the spanish inquisition ! Our chief weapon is rechecked**
 6) Correction de l'erreur
----
+   En mettant simple un n beaucoup plus grand. Donc prendre une courbe avec 256 bits.
+
 ## Exercice 3 - RSA (1pt)
 ### Donnée
 Vous trouverez dans le fichier rsa.sage une implémentation de textbook RSA.

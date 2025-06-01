@@ -1,8 +1,10 @@
-from Crypto.Random import get_random_bytes
 from Crypto.Signature.pss import MGF1
 from Crypto.Hash import SHA256
 from Crypto.Util.strxor import strxor
-from Crypto.Util.Padding import pad, unpad
+from Crypto.Util.Padding import unpad
+BYTE_LEN_RANDOMNESS = 128
+
+
 
 def recover_factors_from_roots(r1, r2, n):
     # r1 ≠ ±r2 mod n
@@ -23,6 +25,8 @@ def sqrtmod(c, p, q):
             roots.append(root)
     return roots
 
+def mgf(seed, length):
+    return MGF1(seed, length, SHA256)
 
 def decrypt(c, p, q):
     n = p * q

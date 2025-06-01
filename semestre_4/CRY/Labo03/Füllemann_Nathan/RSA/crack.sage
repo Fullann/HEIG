@@ -33,10 +33,6 @@ def fermat_factorize(n):
             return int(p), int(q)
         
         a += 1
-        
-        # Afficher progression toutes les 1000 itérations
-        if a % 1000 == 0:
-            print(f"Testé a = {a}...")
 
 # Fonction pour reconstruire la clé privée à partir de la clé publique et des facteurs p et q
 def reconstruct_private_key(public_key, p, q):
