@@ -15,26 +15,26 @@
 sum_asm:
         @@@@@@@@@@@ A completer @@@@@@@@@@
         @ L'espace vide vous donne une idée de la taille de la solution
-        stmfd   sp!, {r1-r3}            @ push arguments on stack
-        stmfd   sp!, {fp, lr}           
-        add     fp, sp, #4              
+        stmfd   sp!, {r1-r3}            @ Sauvegarde les registres r1 à r3 sur la pile
+        stmfd   sp!, {fp, lr}           @ Sauvegarde le frame pointer et le link register
+        add     fp, sp, #4              @ Met à jour le frame pointer
 
-        add     sp, sp, #8              @ jump to arguments
-        eor     r1, r1, r1
-        eor     r2, r2, r2
+        add     sp, sp, #8              @ Saute les deux premiers arguments (r1 et r2) sur la pile
+        eor     r1, r1, r1              @ Initialise r1 à 0 (somme)
+        eor     r2, r2, r2              @ Initialise r2 à 0 (valeur temporaire)
         
         while:
-        cmp     r0, #0                  @ check if counter == 0
-        beq     end                     @ loop if counter == 0
-        ldmfd   sp!, {r2}               @ pop next argument
-        add     r1, r1, r2              @ add to the sum
-        sub     r0, r0, #1              @ decrement counter
-        b       while                   @ loop
+        cmp     r0, #0                  @ Compare le compteur à 0
+        beq     end                     @ Si compteur == 0, saute à la fin
+        ldmfd   sp!, {r2}               @ Charge l'argument suivant dans r2
+        add     r1, r1, r2              @ Ajoute r2 à la somme (r1)
+        sub     r0, r0, #1              @ Décrémente le compteur
+        b       while                   @ Retourne au début de la boucle
         
         end:
-        mov     r0, r1                  @ return sum
+        mov     r0, r1                  @ Place la somme dans r0 (valeur de retour)
         
-        @ epilogue
-        sub     sp, fp, #4              
-        ldmfd   sp!, {fp, pc}           
+        @ épilogue
+        sub     sp, fp, #4              @ Restaure la pile
+        ldmfd   sp!, {fp, pc}           @ Restaure fp et retourne à l'appelant
         @@@@@@@@@@@ ----------- @@@@@@@@@@

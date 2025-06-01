@@ -55,43 +55,45 @@ silly_fib_asm:
 .type fib_asm, @function
 fib_asm:
 #   @@@@@@@@@@@ A completer @@@@@@@@@@
-    push    %ebp
-    mov     %esp, %ebp
 
-    sub     $12, %esp       # reserve space for a, b and n
+    push    %ebp            # Sauvegarde la base de pile précédente 
+    mov     %esp, %ebp      # Crée un nouveau cadre de pile
 
-    mov     8(%ebp), %eax    # n
-    mov     12(%ebp), %edx   # a
-    mov     16(%ebp), %ecx   # b
+    sub     $12, %esp       # Réserve de l'espace sur la pile pour a, b et n
 
-    cmp     $0, %eax        
-    je      10f           # if n == 0, return a
+    mov     8(%ebp), %eax   # Charge n dans %eax
+    mov     12(%ebp), %edx  # Charge a dans %edx
+    mov     16(%ebp), %ecx  # Charge b dans %ecx
 
-    cmp     $1, %eax
-    je      11f           # if n == 1, return b
+    cmp     $0, %eax        # Compare n à 0
+    je      10f             # Si n == 0, saute à l'étiquette 10 (retourne a)
+
+    cmp     $1, %eax        # Compare n à 1
+    je      11f             # Si n == 1, saute à l'étiquette 11 (retourne b)
     
-    dec     %eax            # n-1
-    add     %edx, %ecx      # b + a
-    mov     16(%ebp), %edx  # a = b  
+    dec     %eax            # Décrémente n (n-1)
+    add     %edx, %ecx      # Calcule b + a et stocke le résultat dans %ecx
+    mov     16(%ebp), %edx  # Met à jour a avec la valeur de b
 
-    push    %ecx            # push b + a
-    push    %edx            # push b to replace a 
-    push    %eax            # push n-1
+    push    %ecx            # Empile b+a (nouveau b)
+    push    %edx            # Empile b (nouveau a)
+    push    %eax            # Empile n-1
     
-    call    fib_asm         # fib(n-1, b, b+a)
-    add     $12, %esp       # pop n-1, b, b+a
+    call    fib_asm         # Appelle récursivement fib_asm(n-1, b, b+a)
+    add     $12, %esp       # Libère l'espace réservé sur la pile (n-1, b, b+a)
 
     1:
-    leave 
-    ret
+    leave                   # Restaure le cadre de pile précédent
+    ret                     # Retourne au programme appelant
 
     10:
-    mov     %edx, %eax
-    jmp     1b
+    mov     %edx, %eax      # Place la valeur de a dans %eax (cas n == 0)
+    jmp     1b              # Saute à l'étiquette 1 pour terminer
 
     11:
-    mov     %ecx, %eax
-    jmp     1b
+    mov     %ecx, %eax      # Place la valeur de b dans %eax (cas n == 1)
+    jmp     1b              # Saute à l'étiquette 1 pour terminer
+    
 
 #   @@@@@@@@@@@ ----------- @@@@@@@@@@
 
