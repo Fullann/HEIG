@@ -1,172 +1,111 @@
-.global asm_matrix_distance_simd
+
+.section .data
+    # Espaces pour variables temporaires si nécessaire
+    temp_buffer: .space 16
+
+.section .text
+.globl asm_matrix_distance_simd
 .type asm_matrix_distance_simd, @function
 
-.text
-    
-
-# Functions parameters : image_container* img, image_container* kernel, int x, int y
 asm_matrix_distance_simd:
-#   @@@@@@@@@@@ A completer @@@@@@@@@@
-    push    %ebp                        # Sauvegarder la base de pile courante
-    mov     %esp, %ebp                  # Initialiser la nouvelle base de pile
+    # Prologue
+    pushq %rbp
+    movq %rsp, %rbp
     
-    push    %ebx                        # Sauvegarder ebx
-    push    %esi                        # Sauvegarder esi
-    push    %edi                        # Sauvegarder edi
-
-    # Stocker les paramètres dans les variables globales
-    movl    8(%ebp), %eax               # Charger l'adresse de img dans eax
-    movl    (%eax), %ecx                # Charger img->width dans ecx
-    movl    %ecx, (image_width)         # Stocker la largeur de l'image
-    movl    4(%eax), %ecx               # Charger img->height dans ecx
-    movl    %ecx, (image_height)        # Stocker la hauteur de l'image
-    movl    12(%eax), %esi              # Charger img->data dans esi
-
-    movl    12(%ebp), %eax              # Charger l'adresse de kernel dans eax
-    movl    (%eax), %ecx                # Charger kernel->width dans ecx
-    movl    %ecx, (kernel_width)        # Stocker la largeur du kernel   
-    movl    4(%eax), %ecx               # Charger kernel->height dans ecx
-    movl    %ecx, (kernel_height)       # Stocker la hauteur du kernel
-    movl    12(%eax), %edi              # Charger kernel->data dans edi
-
-    movl    16(%ebp), %eax              # Charger x dans eax
-    movl    %eax, (x)                   # Stocker x
-    movl    20(%ebp), %eax              # Charger y dans eax
-    movl    %eax, (y)                   # Stocker y
-
-    # Initialiser les compteurs et la somme
-    movl    $0, (ky)                    # Initialiser ky à 0
-    pxor    %xmm7, %xmm7                # xmm7 contiendra la somme accumulée
-
-loop_y:
-    movl    $0, (kx)                    # Initialiser kx à 0
+    # Sauvegarder les registres utilisés
+    pushq %rbx
+    pushq %r12
+    pushq %r13
+    pushq %r14
+    pushq %r15
     
-loop_x:
-    # Calculer l'adresse dans l'image : (y + ky) * image_width + x + kx
-    movl    (ky), %eax                  # Charger ky
-    addl    (y), %eax                   # eax = ky + y
-    imull   (image_width), %eax         # eax = (ky + y) * image_width
-    addl    (x), %eax                   # eax = (ky + y) * image_width + x
-    addl    (kx), %eax                  # eax = (ky + y) * image_width + x + kx
-
-    # Méthode alternative pour charger 4 pixels consécutifs
-    # Au lieu de pmovzxbd, utilisons des loads manuels
-    movzbl  (%esi, %eax), %ebx          # Charger pixel 0 -> ebx (32-bit)
-    movd    %ebx, %xmm0                 # Mettre dans xmm0[31:0]
+    # Paramètres de la fonction:
+    # %rdi = image_container *img
+    # %rsi = image_container *kernel  
+    # %rdx = int x
+    # %rcx = int y
     
-    incl    %eax
-    movzbl  (%esi, %eax), %ebx          # Charger pixel 1 -> ebx
-    movd    %ebx, %xmm1                 # Mettre dans xmm1[31:0]
-    pslldq  $4, %xmm1                   # Décaler à gauche de 4 bytes
-    por     %xmm1, %xmm0                # Combiner dans xmm0
+    # Récupérer les informations de l'image
+    movl 4(%rdi), %r8d      # img->height
+    movl 8(%rdi), %r9d      # img->width
+    movq 12(%rdi), %r10     # img->data
     
-    incl    %eax
-    movzbl  (%esi, %eax), %ebx          # Charger pixel 2 -> ebx
-    movd    %ebx, %xmm1                 # Mettre dans xmm1[31:0]
-    pslldq  $8, %xmm1                   # Décaler à gauche de 8 bytes
-    por     %xmm1, %xmm0                # Combiner dans xmm0
+    # Récupérer les informations du kernel
+    movl 4(%rsi), %r11d     # kernel->height
+    movl 8(%rsi), %r12d     # kernel->width
+    movq 12(%rsi), %r13     # kernel->data
     
-    incl    %eax
-    movzbl  (%esi, %eax), %ebx          # Charger pixel 3 -> ebx
-    movd    %ebx, %xmm1                 # Mettre dans xmm1[31:0]
-    pslldq  $12, %xmm1                  # Décaler à gauche de 12 bytes
-    por     %xmm1, %xmm0                # Combiner dans xmm0
-    # Maintenant xmm0 contient [pixel3, pixel2, pixel1, pixel0] en 32-bit
-
-    # Calculer l'adresse dans le kernel : ky * kernel_width + kx  
-    movl    (ky), %eax                  # Charger ky
-    imull   (kernel_width), %eax        # eax = ky * kernel_width
-    addl    (kx), %eax                  # eax = ky * kernel_width + kx
-
-    # Charger 4 pixels du kernel de la même manière
-    movzbl  (%edi, %eax), %ebx          # Charger pixel 0 -> ebx
-    movd    %ebx, %xmm2                 # Mettre dans xmm2[31:0]
+    # Initialiser l'accumulateur SIMD à zéro
+    pxor %xmm0, %xmm0       # Accumulateur principal
     
-    incl    %eax
-    movzbl  (%edi, %eax), %ebx          # Charger pixel 1 -> ebx
-    movd    %ebx, %xmm1                 # Mettre dans xmm1[31:0]
-    pslldq  $4, %xmm1                   # Décaler à gauche de 4 bytes
-    por     %xmm1, %xmm2                # Combiner dans xmm2
+    # Boucle externe: pour chaque ligne du motif
+    xorl %r14d, %r14d       # i = 0 (ligne courante du kernel)
     
-    incl    %eax
-    movzbl  (%edi, %eax), %ebx          # Charger pixel 2 -> ebx
-    movd    %ebx, %xmm1                 # Mettre dans xmm1[31:0]
-    pslldq  $8, %xmm1                   # Décaler à gauche de 8 bytes
-    por     %xmm1, %xmm2                # Combiner dans xmm2
+outer_loop:
+    cmpl %r11d, %r14d       # Comparer i avec kernel->height
+    jge end_outer_loop
     
-    incl    %eax
-    movzbl  (%edi, %eax), %ebx          # Charger pixel 3 -> ebx
-    movd    %ebx, %xmm1                 # Mettre dans xmm1[31:0]
-    pslldq  $12, %xmm1                  # Décaler à gauche de 12 bytes
-    por     %xmm1, %xmm2                # Combiner dans xmm2
-    # Maintenant xmm2 contient [pixel3, pixel2, pixel1, pixel0] du kernel
-
-    # Calculer la différence et le carré
-    psubd   %xmm2, %xmm0                # xmm0 = img - kernel
+    # Boucle interne: pour chaque groupe de 4 pixels de la ligne
+    xorl %r15d, %r15d       # j = 0 (colonne courante)
     
-    # Multiplication manuelle pour éviter pmulld (SSE4.1)
-    # Décomposer xmm0 en deux parties et utiliser pmullw + pmuludq
-    movdqa  %xmm0, %xmm1                # Copier xmm0 dans xmm1
-    pmuludq %xmm0, %xmm0                # Multiplier les éléments 0 et 2 (64-bit)
-    psrlq   $32, %xmm1                  # Décaler pour récupérer éléments 1 et 3
-    pmuludq %xmm1, %xmm1                # Multiplier les éléments 1 et 3 (64-bit)
+inner_loop:
+    cmpl %r12d, %r15d       # Comparer j avec kernel->width
+    jge end_inner_loop
     
-    # Réassembler le résultat
-    pshufd  $0x08, %xmm0, %xmm0         # Récupérer les parties basses de 0 et 2
-    pshufd  $0x08, %xmm1, %xmm1         # Récupérer les parties basses de 1 et 3
-    punpckldq %xmm1, %xmm0              # Entremêler pour reconstituer [3²,1²,2²,0²]
-    pshufd  $0xD8, %xmm0, %xmm0         # Réorganiser en [3²,2²,1²,0²]
-
-    # Accumuler dans xmm7
-    paddd   %xmm0, %xmm7                # xmm7 += xmm0
-
-    # Incrémenter kx par 4 (on traite 4 pixels à la fois)
-    addl    $4, (kx)
-    movl    (kx), %eax
-    cmpl    (kernel_width), %eax        # Comparer kx avec kernel_width
-    jl      loop_x
-
-    # Incrémenter ky
-    incl    (ky)
-    movl    (ky), %eax
-    cmpl    (kernel_height), %eax       # Comparer ky avec kernel_height  
-    jl      loop_y
-
-    # Sommer les 4 valeurs dans xmm7 pour obtenir le résultat final
-    # xmm7 contient [a, b, c, d]
-    phaddd  %xmm7, %xmm7                # xmm7 = [a+b, c+d, a+b, c+d]
-    phaddd  %xmm7, %xmm7                # xmm7 = [a+b+c+d, a+b+c+d, a+b+c+d, a+b+c+d]
+    # Calculer l'adresse dans l'image source
+    # addr_img = img->data + (y + i) * img->width + (x + j)
+    movl %ecx, %eax         # y
+    addl %r14d, %eax        # y + i
+    imull %r9d, %eax        # (y + i) * img->width
+    addl %edx, %eax         # (y + i) * img->width + x
+    addl %r15d, %eax        # (y + i) * img->width + x + j
+    addq %r10, %rax         # Ajouter img->data
     
-    movd    %xmm7, %eax                 # Résultat final dans eax
-
-    pop     %edi                        # Restaurer les registres
-    pop     %esi
-    pop     %ebx
-    leave
+    # Calculer l'adresse dans le kernel
+    # addr_kernel = kernel->data + i * kernel->width + j
+    movl %r14d, %ebx        # i
+    imull %r12d, %ebx       # i * kernel->width
+    addl %r15d, %ebx        # i * kernel->width + j
+    addq %r13, %rbx         # Ajouter kernel->data
+    
+    # Charger et étendre 4 pixels de l'image (8-bit -> 32-bit)
+    pmovzxbd (%rax), %xmm1
+    
+    # Charger et étendre 4 pixels du kernel (8-bit -> 32-bit)
+    pmovzxbd (%rbx), %xmm2
+    
+    # Soustraire les valeurs (4 à la fois)
+    psubd %xmm2, %xmm1      # xmm1 = img_pixels - kernel_pixels
+    
+    # Mettre au carré (multiplier par soi-même)
+    pmulld %xmm1, %xmm1     # xmm1 = (img_pixels - kernel_pixels)²
+    
+    # Accumuler dans l'accumulateur principal
+    paddd %xmm1, %xmm0      # xmm0 += xmm1
+    
+    # Incrémenter j de 4 (traiter 4 pixels à la fois)
+    addl $4, %r15d
+    jmp inner_loop
+    
+end_inner_loop:
+    # Incrémenter i
+    incl %r14d
+    jmp outer_loop
+    
+end_outer_loop:
+    # Finir de sommer les 4 valeurs dans xmm0
+    # Utiliser phaddd pour faire des additions horizontales
+    phaddd %xmm0, %xmm0     # [a+b, c+d, a+b, c+d]
+    phaddd %xmm0, %xmm0     # [a+b+c+d, *, a+b+c+d, *]
+    
+    # Récupérer le résultat final (premier élément de 32 bits)
+    movd %xmm0, %eax        # Retourner la somme finale
+    
+    # Épilogue
+    popq %r15
+    popq %r14
+    popq %r13
+    popq %r12
+    popq %rbx
+    popq %rbp
     ret
-#   @@@@@@@@@@@ ----------- @@@@@@@@@@
-
-
-
-
-.data
-
-kernel_width:
-    .space 4
-
-kernel_height:
-    .space 4
-
-image_width:
-    .space 4
-
-image_height:
-    .space 4
-kx:
-    .space 4
-ky:
-    .space 4
-x: 
-    .space 4
-y: 
-    .space 4
