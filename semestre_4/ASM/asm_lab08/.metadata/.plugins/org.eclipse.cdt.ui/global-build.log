@@ -1,0 +1,34 @@
+10:54:38 **** Build of configuration Debug for project x86_host ****
+make all 
+Building file: ../main.c
+Invoking: Cross GCC Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"main.d" -MT"main.o" -o "main.o" "../main.c"
+Finished building: ../main.c
+ 
+Building file: ../main_attacc.c
+Invoking: Cross GCC Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"main_attacc.d" -MT"main_attacc.o" -o "main_attacc.o" "../main_attacc.c"
+Finished building: ../main_attacc.c
+ 
+Building target: x86_host
+Invoking: Cross GCC Linker
+gcc  -o "x86_host"  ./main.o ./main_attacc.o   
+/usr/bin/ld: ./main_attacc.o: in function `main':
+/home/reds/asm/asm21_lab07_wip/x86_host/Debug/../main_attacc.c:3: multiple definition of `main'; ./main.o:/home/reds/asm/asm21_lab07_wip/x86_host/Debug/../main.c:39: first defined here
+collect2: error: ld returned 1 exit status
+make: *** [makefile:31: x86_host] Error 1
+"make all" terminated with exit code 2. Build might be incomplete.
+10:55:42 **** Incremental Build of configuration Debug for project x86_host ****
+make all 
+Building target: x86_host
+Invoking: Cross GCC Linker
+gcc  -o "x86_host"  ./main.o ./main_attacc.o   
+/usr/bin/ld: ./main_attacc.o: in function `main':
+/home/reds/asm/asm21_lab07_wip/x86_host/Debug/../main_attacc.c:3: multiple definition of `main'; ./main.o:/home/reds/asm/asm21_lab07_wip/x86_host/Debug/../main.c:39: first defined here
+collect2: error: ld returned 1 exit status
+make: *** [makefile:31: x86_host] Error 1
+"make all" terminated with exit code 2. Build might be incomplete.
+14:44:14 **** Clean-only build of configuration Debug for project x86_host ****
+make clean 
+make: *** No rule to make target 'clean'.  Stop.
+"make clean" terminated with exit code 2. Build might be incomplete.

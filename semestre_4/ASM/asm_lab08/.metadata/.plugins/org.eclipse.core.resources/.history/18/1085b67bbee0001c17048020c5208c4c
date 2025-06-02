@@ -1,0 +1,26 @@
+# Author : Prénom Nom
+
+.global fir_filter_asm
+
+## @brief fir_filter_asm applies filter given by coefficients to samples and stores
+##                       the resulting signal in result
+## @parameter int16_t* samples
+## @parameter int16_t* coefficients
+## @parameter uint32_t n_samples
+## @parameter uint32_t n_coefficients
+## @parameter int32_t* result
+fir_filter_asm:
+        # Prologue
+        ##########
+
+        # TODO
+
+        # Computation
+        #############
+
+        # TODO
+
+        # Epilogue
+        ##########
+
+        # TODO
