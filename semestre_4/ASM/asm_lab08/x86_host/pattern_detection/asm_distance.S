@@ -7,144 +7,97 @@
 # Functions parameters : image_container* img, image_container* kernel, int x, int y
 asm_matrix_distance_simd:
 #   @@@@@@@@@@@ A completer @@@@@@@@@@
-# Prologue - sauvegarde des registres et setup du stack frame
-    # Prologue - sauvegarde des registres et setup du stack frame
-    pushl %ebp
-    movl %esp, %ebp
-    pushl %ebx
-    pushl %esi
-    pushl %edi
+push    %ebp
+    mov     %esp, %ebp
+    subl    $4, %esp                # localvar: sum
     
-    # Récupération des paramètres depuis la pile
-    movl 8(%ebp), %eax      # img pointer
-    movl 12(%ebp), %ebx     # kernel pointer  
-    movl 16(%ebp), %ecx     # x coordinate
-    movl 20(%ebp), %edx     # y coordinate
+    push    %ebx
+    push    %esi
+    push    %edi
+
+    # Récupération des données de l'image
+    movl    8(%ebp), %eax           # img address
+    movl    8(%eax), %ecx            # img->width
+    movl    %ecx, (image_width)
+    movl    4(%eax), %ecx           # img->height
+    movl    %ecx, (image_height)
+    movl    12(%eax), %esi          # esi = img->data
+
+    # Récupération des données du kernel
+    movl    12(%ebp), %eax          # kernel address
+    movl    8(%eax), %ecx            # kernel->width
+    movl    %ecx, (kernel_width)    
+    movl    4(%eax), %ecx           # kernel->height
+    movl    %ecx, (kernel_height)
+    movl    12(%eax), %edi          # edi = kernel->data
+
+    # Récupération des coordonnées
+    movl    16(%ebp), %eax          # x
+    movl    %eax, (x)
+    movl    20(%ebp), %eax          # y
+    movl    %eax, (y)
+
+    # Initialisation des variables
+    movl    $0, (ky)
+    movl    $0, -4(%ebp)            # initialize sum to 0
+    pxor    %xmm7, %xmm7            # accumulator for sum (reset to 0)
+        
+loop_y:
+    movl    $0, (kx)                # init kx to 0
     
-    # Sauvegarde des coordonnées dans les variables globales
-    movl %ecx, x
-    movl %edx, y
-    
-    # Récupération des dimensions du kernel
-    movl 0(%ebx), %ecx      # kernel->width
-    movl %ecx, kernel_width
-    movl 4(%ebx), %ecx      # kernel->height
-    movl %ecx, kernel_height
-    
-    # Récupération des dimensions de l'image
-    movl 0(%eax), %ecx      # img->width
-    movl %ecx, image_width
-    movl 4(%eax), %ecx      # img->height
-    movl %ecx, image_height
-    
-    # Récupération des pointeurs vers les données
-    movl 12(%eax), %esi     # img->data
-    movl 12(%ebx), %edi     # kernel->data
-    
-    # Initialisation de l'accumulateur SIMD
-    pxor %xmm0, %xmm0       # sum = 0
-    pxor %xmm7, %xmm7       # registre de zéros pour les extensions
-    
-    # Boucle externe: parcours des lignes du kernel
-    movl $0, ky
-outer_loop:
-    movl ky, %eax
-    cmpl kernel_height, %eax
-    jge end_outer_loop
-    
-    # Boucle interne: parcours des colonnes du kernel (par groupes de 4)
-    movl $0, kx
-inner_loop:
-    movl kx, %eax
-    cmpl kernel_width, %eax
-    jge end_inner_loop
-    
-    # Calcul de l'adresse dans l'image
-    # img_addr = img_data + (y + ky) * img_width + (x + kx)
-    movl y, %eax
-    addl ky, %eax           # y + ky
-    imull image_width, %eax # (y + ky) * img_width
-    movl x, %ebx
-    addl kx, %ebx           # x + kx
-    addl %ebx, %eax         # (y + ky) * img_width + (x + kx)
-    addl %esi, %eax         # img_data + offset
-    
+loop_x:
+    # Calcul de l'adresse dans l'image source
+    # addr_img = (y + ky) * image_width + (x + kx)
+    movl    (ky), %ebx              # ebx = ky
+    addl    (y), %ebx               # ebx = ky + y   
+    imull   (image_width), %ebx     # ebx = (ky + y) * image_width
+    movl    (kx), %eax              # eax = kx
+    addl    (x), %eax               # eax = kx + x
+    addl    %eax, %ebx              # ebx = (ky + y) * image_width + (kx + x)
+
+    # Chargement et extension des pixels de l'image (4 pixels à la fois)
+    pmovzxbd (%esi, %ebx), %xmm0    # extend to 32-bit integers 4 pixels from image
+
     # Calcul de l'adresse dans le kernel
-    # kernel_addr = kernel_data + ky * kernel_width + kx
-    movl ky, %ebx
-    imull kernel_width, %ebx # ky * kernel_width
-    movl kx, %ecx
-    addl %ecx, %ebx         # ky * kernel_width + kx
-    addl %edi, %ebx         # kernel_data + offset
-    
-    # Chargement des 4 pixels de l'image (8-bit)
-    movd (%eax), %xmm1      # Charger 4 bytes dans les 32 bits inférieurs
-    punpcklbw %xmm7, %xmm1  # Étendre 8->16 bit (avec des zéros)
-    punpcklwd %xmm7, %xmm1  # Étendre 16->32 bit (avec des zéros)
-    
-    # Chargement des 4 pixels du kernel (8-bit)
-    movd (%ebx), %xmm2      # Charger 4 bytes dans les 32 bits inférieurs
-    punpcklbw %xmm7, %xmm2  # Étendre 8->16 bit (avec des zéros)
-    punpcklwd %xmm7, %xmm2  # Étendre 16->32 bit (avec des zéros)
-    
-    # Calcul de la différence
-    psubd %xmm2, %xmm1      # img_pixels - kernel_pixels
-    
-    # Mise au carré des différences (multiplication 32-bit en SSE2)
-    # Utilisation de la formule: (a-b)² = a² - 2ab + b²
-    # Mais plus simple: on fait la multiplication directement
-    movdqa %xmm1, %xmm3     # Copie de la différence
-    
-    # Multiplication 32-bit avec SSE2 (plus complexe qu'avec SSE4.1)
-    # On utilise pmuludq qui multiplie les éléments 0 et 2 (64-bit result)
-    movdqa %xmm1, %xmm4     # Copie pour éléments 0,2
-    movdqa %xmm1, %xmm5     # Copie pour éléments 1,3
-    
-    pmuludq %xmm3, %xmm4    # Multiplie éléments 0 et 2
-    psrlq $32, %xmm5        # Décale pour accéder aux éléments 1,3
-    psrlq $32, %xmm3        # Décale la copie aussi
-    pmuludq %xmm3, %xmm5    # Multiplie éléments 1 et 3
-    
-    # Recomposer le résultat
-    psllq $32, %xmm5        # Remet les éléments 1,3 en place
-    por %xmm5, %xmm4        # Combine les résultats
-    
-    # Accumulation des carrés
-    paddd %xmm4, %xmm0      # sum += squared_differences
-    
-    # Incrémentation de kx par 4 (traitement de 4 pixels à la fois)
-    addl $4, kx
-    jmp inner_loop
+    # addr_kernel = ky * kernel_width + kx
+    movl    (ky), %eax              
+    imull   (kernel_width), %eax
+    addl    (kx), %eax
 
-end_inner_loop:
-    # Incrémentation de ky
-    incl ky
-    jmp outer_loop
+    # Chargement et extension des pixels du kernel (4 pixels à la fois)
+    pmovzxbd (%edi, %eax), %xmm1    # extend to 32-bit integers 4 pixels from kernel
 
-end_outer_loop:
-    # Réduction horizontale pour obtenir la somme finale
-    # Additionner les 4 valeurs 32-bit dans xmm0
-    movdqa %xmm0, %xmm1     # Copie
-    psrldq $8, %xmm1        # Décale de 8 bytes (2 éléments)
-    paddd %xmm1, %xmm0      # Additionne les paires
+    # Calcul de la différence au carré
+    psubd   %xmm1, %xmm0            # compute vectorized difference between pixels
+    pmulld  %xmm0, %xmm0            # compute vectorized square of differences
+
+    # Accumulation dans le registre xmm7
+    paddd   %xmm0, %xmm7            # accumulate the 4 squared differences
+
+    # Incrément de kx par 4 (traitement de 4 pixels à la fois)
+    addl    $4, (kx)
+    movl    (kx), %eax
+    cmpl    (kernel_width), %eax
+    jl      loop_x
+
+    # Incrément de ky
+    incl    (ky)
+    movl    (ky), %eax
+    cmpl    (kernel_height), %eax
+    jl      loop_y
+
+    # Réduction finale : somme horizontale des 4 composantes de xmm7
+    phaddd  %xmm7, %xmm7            # horizontally add pairs: [a+b, c+d, a+b, c+d]
+    phaddd  %xmm7, %xmm7            # horizontally add pairs: [a+b+c+d, a+b+c+d, a+b+c+d, a+b+c+d]
     
-    movdqa %xmm0, %xmm1     # Copie
-    psrldq $4, %xmm1        # Décale de 4 bytes (1 élément)
-    paddd %xmm1, %xmm0      # Additionne le dernier élément
-    
-    # Extraction du résultat final dans %eax
-    movd %xmm0, %eax
-    
-    # Épilogue - restauration des registres
-    popl %edi
-    popl %esi
-    popl %ebx
-    popl %ebp
+    # Extraction du résultat final
+    movd    %xmm7, %eax             # move the final sum to eax
+
+    pop     %edi
+    pop     %esi
+    pop     %ebx
+    leave   
     ret
-
-
-
-
 #   @@@@@@@@@@@ ----------- @@@@@@@@@@
 
 
