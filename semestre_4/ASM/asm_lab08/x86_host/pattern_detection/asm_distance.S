@@ -2,126 +2,99 @@
 .type asm_matrix_distance_simd, @function
 
 .text
-    
 
 # Functions parameters : image_container* img, image_container* kernel, int x, int y
 asm_matrix_distance_simd:
 #   @@@@@@@@@@@ A completer @@@@@@@@@@
+    push    %ebp
+    mov     %esp, %ebp
+    
+    push    %ebx
+    push    %esi
+    push    %edi
 
-    # Prologue
-    pushq %rbp
-    movq %rsp, %rbp
-    
-    # Sauvegarder les registres utilisés
-    pushq %rbx
-    pushq %r12
-    pushq %r13
-    pushq %r14
-    pushq %r15
-    
-    # Paramètres de la fonction:
-    # %rdi = image_container *img
-    # %rsi = image_container *kernel  
-    # %rdx = int x
-    # %rcx = int y
-    
-    # Sauvegarder les paramètres dans les variables globales
-    movl %edx, x(%rip)
-    movl %ecx, y(%rip)
-    
-    # Récupérer et sauvegarder les informations de l'image
-    movl 4(%rdi), %eax      # img->height
-    movl %eax, image_height(%rip)
-    movl 8(%rdi), %eax      # img->width
-    movl %eax, image_width(%rip)
-    movq 12(%rdi), %r10     # img->data
-    
-    # Récupérer et sauvegarder les informations du kernel
-    movl 4(%rsi), %eax      # kernel->height
-    movl %eax, kernel_height(%rip)
-    movl 8(%rsi), %eax      # kernel->width
-    movl %eax, kernel_width(%rip)
-    movq 12(%rsi), %r13     # kernel->data
-    
-    # Initialiser l'accumulateur SIMD à zéro
-    pxor %xmm0, %xmm0       # Accumulateur principal
-    
-    # Initialiser ky = 0 (ligne courante du kernel)
-    movl $0, ky(%rip)
-    
-outer_loop:
-    # Vérifier si ky < kernel_height
-    movl ky(%rip), %eax
-    cmpl kernel_height(%rip), %eax
-    jge end_outer_loop
-    
-    # Initialiser kx = 0 (colonne courante)
-    movl $0, kx(%rip)
-    
-inner_loop:
-    # Vérifier si kx < kernel_width
-    movl kx(%rip), %eax
-    cmpl kernel_width(%rip), %eax
-    jge end_inner_loop
-    
-    # Calculer l'adresse dans l'image source
-    # addr_img = img->data + (y + ky) * img->width + (x + kx)
-    movl y(%rip), %eax      # y
-    addl ky(%rip), %eax     # y + ky
-    imull image_width(%rip), %eax  # (y + ky) * img->width
-    addl x(%rip), %eax      # (y + ky) * img->width + x
-    addl kx(%rip), %eax     # (y + ky) * img->width + x + kx
-    addq %r10, %rax         # Ajouter img->data
-    
-    # Calculer l'adresse dans le kernel
-    # addr_kernel = kernel->data + ky * kernel->width + kx
-    movl ky(%rip), %ebx     # ky
-    imull kernel_width(%rip), %ebx  # ky * kernel->width
-    addl kx(%rip), %ebx     # ky * kernel->width + kx
-    addq %r13, %rbx         # Ajouter kernel->data
-    
-    # Charger et étendre 4 pixels de l'image (8-bit -> 32-bit)
-    pmovzxbd (%rax), %xmm1
-    
-    # Charger et étendre 4 pixels du kernel (8-bit -> 32-bit)
-    pmovzxbd (%rbx), %xmm2
-    
-    # Soustraire les valeurs (4 à la fois)
-    psubd %xmm2, %xmm1      # xmm1 = img_pixels - kernel_pixels
-    
-    # Mettre au carré (multiplier par soi-même)
-    pmulld %xmm1, %xmm1     # xmm1 = (img_pixels - kernel_pixels)²
-    
-    # Accumuler dans l'accumulateur principal
-    paddd %xmm1, %xmm0      # xmm0 += xmm1
-    
-    # Incrémenter kx de 4 (traiter 4 pixels à la fois)
-    addl $4, kx(%rip)
-    jmp inner_loop
-    
-end_inner_loop:
-    # Incrémenter ky
-    addl $1, ky(%rip)
-    jmp outer_loop
-    
-end_outer_loop:
-    # Finir de sommer les 4 valeurs dans xmm0
-    # Utiliser phaddd pour faire des additions horizontales
-    phaddd %xmm0, %xmm0     # [a+b, c+d, a+b, c+d]
-    phaddd %xmm0, %xmm0     # [a+b+c+d, *, a+b+c+d, *]
-    
-    # Récupérer le résultat final (premier élément de 32 bits)
-    movd %xmm0, %eax        # Retourner la somme finale
-    
-    # Épilogue
-    popq %r15
-    popq %r14
-    popq %r13
-    popq %r12
-    popq %rbx
-    popq %rbp
+    # Récupérer les paramètres et stocker les dimensions
+    movl    8(%ebp), %eax           # img address
+    movl    8(%eax), %ecx           # img->width (offset 8, pas 0)
+    movl    %ecx, (image_width)
+    movl    4(%eax), %ecx           # img->height (offset 4)
+    movl    %ecx, (image_height)
+
+    movl    12(%ebp), %eax          # kernel address
+    movl    8(%eax), %ecx           # kernel->width (offset 8, pas 0)
+    movl    %ecx, (kernel_width)    
+    movl    4(%eax), %ecx           # kernel->height (offset 4)
+    movl    %ecx, (kernel_height)   
+
+    movl    16(%ebp), %eax          # x
+    movl    %eax, (x)
+
+    movl    20(%ebp), %eax          # y
+    movl    %eax, (y)
+
+    # Initialisation
+    movl    $0, (ky)
+    pxor    %xmm7, %xmm7            # Accumulateur global dans xmm7
+
+    movl    8(%ebp), %eax           # img address
+    movl    12(%eax), %esi          # esi = img->data
+
+    movl    12(%ebp), %eax          # kernel address
+    movl    12(%eax), %edi          # edi = kernel->data
+        
+    loop_y:
+        movl        $0, (kx)            # init kx to 0
+    loop_x:
+
+        # Calculer l'adresse dans l'image
+        movl        (ky), %ebx          # ebx = ky
+        addl        (y), %ebx           # ebx = ky + y   
+        imull       (image_width), %ebx # ebx = (ky + y) * image_width
+        addl        (kx), %ebx          # ebx = (ky + y) * image_width + kx
+        addl        (x), %ebx           # ebx = (ky + y) * image_width + kx + x
+
+        # Charger et étendre 4 pixels de l'image
+        pmovzxbd    (%esi, %ebx), %xmm0 # extend to 32-bit integers 4 pixels
+
+        # Calculer l'adresse dans le kernel
+        movl        (ky), %ebx          
+        imull       (kernel_width), %ebx
+        addl        (kx), %ebx        
+
+        # Charger et étendre 4 pixels du kernel
+        pmovzxbd    (%edi, %ebx), %xmm1 # extend to 32-bit integers 4 pixels
+
+        # Calculer la différence au carré
+        psubd       %xmm1, %xmm0        # compute vectorized difference between pixels
+        pmulld      %xmm0, %xmm0        # compute vectorized square between pixels
+
+        # Accumuler dans l'accumulateur global
+        paddd       %xmm0, %xmm7        # Ajouter à l'accumulateur global
+
+        # Incrémenter kx de 4 et vérifier la condition
+        addl        $4, (kx)
+        movl        (kx), %eax
+        cmpl        (kernel_width), %eax
+        jl loop_x
+
+    # Incrémenter ky et vérifier la condition
+    incl        (ky)
+    movl        (ky), %eax
+    cmpl        (kernel_height), %eax
+    jl loop_y
+
+    # Sommer horizontalement les 4 valeurs accumulées
+    phaddd      %xmm7, %xmm7        # [a+b, c+d, a+b, c+d]
+    phaddd      %xmm7, %xmm7        # [a+b+c+d, *, a+b+c+d, *]
+
+    # Récupérer le résultat final
+    movd        %xmm7, %eax         # Retourner la somme finale
+
+    pop     %edi
+    pop     %esi
+    pop     %ebx
+    leave   
     ret
-
 #   @@@@@@@@@@@ ----------- @@@@@@@@@@
 
 
