@@ -49,20 +49,73 @@ loop_x:
     addl    (x), %eax                   # eax = (ky + y) * image_width + x
     addl    (kx), %eax                  # eax = (ky + y) * image_width + x + kx
 
-    # Charger 4 pixels de l'image (extension zéro vers 32 bits)
-    pmovzxbd (%esi, %eax), %xmm0        # 4 pixels image -> xmm0
+    # Méthode alternative pour charger 4 pixels consécutifs
+    # Au lieu de pmovzxbd, utilisons des loads manuels
+    movzbl  (%esi, %eax), %ebx          # Charger pixel 0 -> ebx (32-bit)
+    movd    %ebx, %xmm0                 # Mettre dans xmm0[31:0]
+    
+    incl    %eax
+    movzbl  (%esi, %eax), %ebx          # Charger pixel 1 -> ebx
+    movd    %ebx, %xmm1                 # Mettre dans xmm1[31:0]
+    pslldq  $4, %xmm1                   # Décaler à gauche de 4 bytes
+    por     %xmm1, %xmm0                # Combiner dans xmm0
+    
+    incl    %eax
+    movzbl  (%esi, %eax), %ebx          # Charger pixel 2 -> ebx
+    movd    %ebx, %xmm1                 # Mettre dans xmm1[31:0]
+    pslldq  $8, %xmm1                   # Décaler à gauche de 8 bytes
+    por     %xmm1, %xmm0                # Combiner dans xmm0
+    
+    incl    %eax
+    movzbl  (%esi, %eax), %ebx          # Charger pixel 3 -> ebx
+    movd    %ebx, %xmm1                 # Mettre dans xmm1[31:0]
+    pslldq  $12, %xmm1                  # Décaler à gauche de 12 bytes
+    por     %xmm1, %xmm0                # Combiner dans xmm0
+    # Maintenant xmm0 contient [pixel3, pixel2, pixel1, pixel0] en 32-bit
 
     # Calculer l'adresse dans le kernel : ky * kernel_width + kx  
     movl    (ky), %eax                  # Charger ky
     imull   (kernel_width), %eax        # eax = ky * kernel_width
     addl    (kx), %eax                  # eax = ky * kernel_width + kx
 
-    # Charger 4 pixels du kernel (extension zéro vers 32 bits)
-    pmovzxbd (%edi, %eax), %xmm1        # 4 pixels kernel -> xmm1
+    # Charger 4 pixels du kernel de la même manière
+    movzbl  (%edi, %eax), %ebx          # Charger pixel 0 -> ebx
+    movd    %ebx, %xmm2                 # Mettre dans xmm2[31:0]
+    
+    incl    %eax
+    movzbl  (%edi, %eax), %ebx          # Charger pixel 1 -> ebx
+    movd    %ebx, %xmm1                 # Mettre dans xmm1[31:0]
+    pslldq  $4, %xmm1                   # Décaler à gauche de 4 bytes
+    por     %xmm1, %xmm2                # Combiner dans xmm2
+    
+    incl    %eax
+    movzbl  (%edi, %eax), %ebx          # Charger pixel 2 -> ebx
+    movd    %ebx, %xmm1                 # Mettre dans xmm1[31:0]
+    pslldq  $8, %xmm1                   # Décaler à gauche de 8 bytes
+    por     %xmm1, %xmm2                # Combiner dans xmm2
+    
+    incl    %eax
+    movzbl  (%edi, %eax), %ebx          # Charger pixel 3 -> ebx
+    movd    %ebx, %xmm1                 # Mettre dans xmm1[31:0]
+    pslldq  $12, %xmm1                  # Décaler à gauche de 12 bytes
+    por     %xmm1, %xmm2                # Combiner dans xmm2
+    # Maintenant xmm2 contient [pixel3, pixel2, pixel1, pixel0] du kernel
 
     # Calculer la différence et le carré
-    psubd   %xmm1, %xmm0                # xmm0 = img - kernel
-    pmulld  %xmm0, %xmm0                # xmm0 = (img - kernel)²
+    psubd   %xmm2, %xmm0                # xmm0 = img - kernel
+    
+    # Multiplication manuelle pour éviter pmulld (SSE4.1)
+    # Décomposer xmm0 en deux parties et utiliser pmullw + pmuludq
+    movdqa  %xmm0, %xmm1                # Copier xmm0 dans xmm1
+    pmuludq %xmm0, %xmm0                # Multiplier les éléments 0 et 2 (64-bit)
+    psrlq   $32, %xmm1                  # Décaler pour récupérer éléments 1 et 3
+    pmuludq %xmm1, %xmm1                # Multiplier les éléments 1 et 3 (64-bit)
+    
+    # Réassembler le résultat
+    pshufd  $0x08, %xmm0, %xmm0         # Récupérer les parties basses de 0 et 2
+    pshufd  $0x08, %xmm1, %xmm1         # Récupérer les parties basses de 1 et 3
+    punpckldq %xmm1, %xmm0              # Entremêler pour reconstituer [3²,1²,2²,0²]
+    pshufd  $0xD8, %xmm0, %xmm0         # Réorganiser en [3²,2²,1²,0²]
 
     # Accumuler dans xmm7
     paddd   %xmm0, %xmm7                # xmm7 += xmm0
