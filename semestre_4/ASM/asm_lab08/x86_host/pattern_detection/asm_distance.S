@@ -1,3 +1,12 @@
+.global asm_matrix_distance_simd
+.type asm_matrix_distance_simd, @function
+
+.text
+    
+
+# Functions parameters : image_container* img, image_container* kernel, int x, int y
+asm_matrix_distance_simd:
+#   @@@@@@@@@@@ A completer @@@@@@@@@@
 # Prologue - sauvegarde des registres et setup du stack frame
     pushl %ebp
     movl %esp, %ebp
@@ -105,3 +114,32 @@ end_outer_loop:
     popl %ebx
     popl %ebp
     ret
+
+
+
+#   @@@@@@@@@@@ ----------- @@@@@@@@@@
+
+
+
+
+.data
+
+kernel_width:
+    .space 4
+
+kernel_height:
+    .space 4
+
+image_width:
+    .space 4
+
+image_height:
+    .space 4
+kx:
+    .space 4
+ky:
+    .space 4
+x: 
+    .space 4
+y: 
+    .space 4
