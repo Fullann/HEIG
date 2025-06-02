@@ -1,13 +1,13 @@
-
-.section .data
-    # Espaces pour variables temporaires si nécessaire
-    temp_buffer: .space 16
-
-.section .text
-.globl asm_matrix_distance_simd
+.global asm_matrix_distance_simd
 .type asm_matrix_distance_simd, @function
 
+.text
+    
+
+# Functions parameters : image_container* img, image_container* kernel, int x, int y
 asm_matrix_distance_simd:
+#   @@@@@@@@@@@ A completer @@@@@@@@@@
+
     # Prologue
     pushq %rbp
     movq %rsp, %rbp
@@ -25,47 +25,59 @@ asm_matrix_distance_simd:
     # %rdx = int x
     # %rcx = int y
     
-    # Récupérer les informations de l'image
-    movl 4(%rdi), %r8d      # img->height
-    movl 8(%rdi), %r9d      # img->width
+    # Sauvegarder les paramètres dans les variables globales
+    movl %edx, x(%rip)
+    movl %ecx, y(%rip)
+    
+    # Récupérer et sauvegarder les informations de l'image
+    movl 4(%rdi), %eax      # img->height
+    movl %eax, image_height(%rip)
+    movl 8(%rdi), %eax      # img->width
+    movl %eax, image_width(%rip)
     movq 12(%rdi), %r10     # img->data
     
-    # Récupérer les informations du kernel
-    movl 4(%rsi), %r11d     # kernel->height
-    movl 8(%rsi), %r12d     # kernel->width
+    # Récupérer et sauvegarder les informations du kernel
+    movl 4(%rsi), %eax      # kernel->height
+    movl %eax, kernel_height(%rip)
+    movl 8(%rsi), %eax      # kernel->width
+    movl %eax, kernel_width(%rip)
     movq 12(%rsi), %r13     # kernel->data
     
     # Initialiser l'accumulateur SIMD à zéro
     pxor %xmm0, %xmm0       # Accumulateur principal
     
-    # Boucle externe: pour chaque ligne du motif
-    xorl %r14d, %r14d       # i = 0 (ligne courante du kernel)
+    # Initialiser ky = 0 (ligne courante du kernel)
+    movl $0, ky(%rip)
     
 outer_loop:
-    cmpl %r11d, %r14d       # Comparer i avec kernel->height
+    # Vérifier si ky < kernel_height
+    movl ky(%rip), %eax
+    cmpl kernel_height(%rip), %eax
     jge end_outer_loop
     
-    # Boucle interne: pour chaque groupe de 4 pixels de la ligne
-    xorl %r15d, %r15d       # j = 0 (colonne courante)
+    # Initialiser kx = 0 (colonne courante)
+    movl $0, kx(%rip)
     
 inner_loop:
-    cmpl %r12d, %r15d       # Comparer j avec kernel->width
+    # Vérifier si kx < kernel_width
+    movl kx(%rip), %eax
+    cmpl kernel_width(%rip), %eax
     jge end_inner_loop
     
     # Calculer l'adresse dans l'image source
-    # addr_img = img->data + (y + i) * img->width + (x + j)
-    movl %ecx, %eax         # y
-    addl %r14d, %eax        # y + i
-    imull %r9d, %eax        # (y + i) * img->width
-    addl %edx, %eax         # (y + i) * img->width + x
-    addl %r15d, %eax        # (y + i) * img->width + x + j
+    # addr_img = img->data + (y + ky) * img->width + (x + kx)
+    movl y(%rip), %eax      # y
+    addl ky(%rip), %eax     # y + ky
+    imull image_width(%rip), %eax  # (y + ky) * img->width
+    addl x(%rip), %eax      # (y + ky) * img->width + x
+    addl kx(%rip), %eax     # (y + ky) * img->width + x + kx
     addq %r10, %rax         # Ajouter img->data
     
     # Calculer l'adresse dans le kernel
-    # addr_kernel = kernel->data + i * kernel->width + j
-    movl %r14d, %ebx        # i
-    imull %r12d, %ebx       # i * kernel->width
-    addl %r15d, %ebx        # i * kernel->width + j
+    # addr_kernel = kernel->data + ky * kernel->width + kx
+    movl ky(%rip), %ebx     # ky
+    imull kernel_width(%rip), %ebx  # ky * kernel->width
+    addl kx(%rip), %ebx     # ky * kernel->width + kx
     addq %r13, %rbx         # Ajouter kernel->data
     
     # Charger et étendre 4 pixels de l'image (8-bit -> 32-bit)
@@ -83,13 +95,13 @@ inner_loop:
     # Accumuler dans l'accumulateur principal
     paddd %xmm1, %xmm0      # xmm0 += xmm1
     
-    # Incrémenter j de 4 (traiter 4 pixels à la fois)
-    addl $4, %r15d
+    # Incrémenter kx de 4 (traiter 4 pixels à la fois)
+    addl $4, kx(%rip)
     jmp inner_loop
     
 end_inner_loop:
-    # Incrémenter i
-    incl %r14d
+    # Incrémenter ky
+    addl $1, ky(%rip)
     jmp outer_loop
     
 end_outer_loop:
@@ -109,3 +121,30 @@ end_outer_loop:
     popq %rbx
     popq %rbp
     ret
+
+#   @@@@@@@@@@@ ----------- @@@@@@@@@@
+
+
+
+
+.data
+
+kernel_width:
+    .space 4
+
+kernel_height:
+    .space 4
+
+image_width:
+    .space 4
+
+image_height:
+    .space 4
+kx:
+    .space 4
+ky:
+    .space 4
+x: 
+    .space 4
+y: 
+    .space 4
