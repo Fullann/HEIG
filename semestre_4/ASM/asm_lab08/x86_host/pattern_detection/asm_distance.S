@@ -7,93 +7,91 @@
 # Functions parameters : image_container* img, image_container* kernel, int x, int y
 asm_matrix_distance_simd:
 #   @@@@@@@@@@@ A completer @@@@@@@@@@
- push    %ebp
-    mov     %esp, %ebp
-    subl    $4, %esp                # localvar: sum
+    push    %ebp                        # Sauvegarder la base de pile courante
+    mov     %esp, %ebp                  # Initialiser la nouvelle base de pile
+    subl    $4, %esp                    # Réserver 4 octets pour la variable locale sum
     
-    push    %ebx
-    push    %esi
-    push    %edi
+    push    %ebx                        # Sauvegarder ebx
+    push    %esi                        # Sauvegarder esi
+    push    %edi                        # Sauvegarder edi
 
     
-    movl    8(%ebp), %eax           # img address
-    movl    (%eax), %ecx            # img->width
-    movl    %ecx, (image_width)
-    movl    4(%eax), %ecx           # img->height
-    movl    %ecx, (image_height)
+    movl    8(%ebp), %eax               # Charger l'adresse de img dans eax
+    movl    (%eax), %ecx                # Charger img->width dans ecx
+    movl    %ecx, (image_width)         # Stocker la largeur de l'image
+    movl    4(%eax), %ecx               # Charger img->height dans ecx
+    movl    %ecx, (image_height)        # Stocker la hauteur de l'image
 
-    movl    12(%ebp), %eax          # kernel address
-    movl    (%eax), %ecx            # kernel->width
-    movl    %ecx, (kernel_width)    
-    movl    4(%eax), %ecx           # kernel->height
-    movl    %ecx, (kernel_height)   
+    movl    12(%ebp), %eax              # Charger l'adresse de kernel dans eax
+    movl    (%eax), %ecx                # Charger kernel->width dans ecx
+    movl    %ecx, (kernel_width)        # Stocker la largeur du kernel   
+    movl    4(%eax), %ecx               # Charger kernel->height dans ecx
+    movl    %ecx, (kernel_height)       # Stocker la hauteur du kernel
 
-    movl    16(%ebp), %eax          # x
-    movl    %eax, (x)
+    movl    16(%ebp), %eax              # Charger x dans eax
+    movl    %eax, (x)                   # Stocker x
 
-    movl    20(%ebp), %eax          # y
-    movl    %eax, (y)
+    movl    20(%ebp), %eax              # Charger y dans eax
+    movl    %eax, (y)                   # Stocker y
 
-    movl    $0, (ky)
-    movl    $0, -4(%ebp)            # initialize sum to 0
+    movl    $0, (ky)                    # Initialiser ky à 0
+    movl    $0, -4(%ebp)                # Initialiser sum à 0
 
-    pxor    %xmm0, %xmm0            # reset xmm0
-    pxor    %xmm1, %xmm1            # reset xmm1
+    pxor    %xmm0, %xmm0                # Réinitialiser xmm0 à 0
+    pxor    %xmm1, %xmm1                # Réinitialiser xmm1 à 0
 
-    movl    8(%ebp), %eax           # img address
-    movl    12(%eax), %esi          # esi = img->data
+    movl    8(%ebp), %eax               # Charger l'adresse de img dans eax
+    movl    12(%eax), %esi              # Charger img->data dans esi
 
-    movl    12(%ebp), %eax          # kernel address
-    movl    12(%eax), %edi          # edi = kernel->data
+    movl    12(%ebp), %eax              # Charger l'adresse de kernel dans eax
+    movl    12(%eax), %edi              # Charger kernel->data dans edi
         
     loop_y:
-        movl        $0, (kx)            # init kx to 0
+        movl        $0, (kx)            # Initialiser kx à 0
     loop_x:
 
-        movl        (ky), %ebx          # ebx = ky
+        movl        (ky), %ebx          # Charger ky dans ebx
         addl        (y), %ebx           # ebx = ky + y   
         imull       (image_width), %ebx # ebx = (ky + y) * image_width
         addl        (kx), %ebx          # ebx = (ky + y) * image_width + kx
         addl        (x), %ebx           # ebx = (ky + y) * image_width + kx + x
 
-        pmovzxbd    (%esi, %ebx), %xmm0 # extend to 32-bit integers 4 pixels
+        pmovzxbd    (%esi, %ebx), %xmm0 # Charger 4 pixels de l'image (zéro-extension 32 bits)
 
         # ebx = ky * kernel->width + kx
 
-        movl        (ky), %ebx          
-        imull       (kernel_width), %ebx
-        addl        (kx), %ebx        
+        movl        (ky), %ebx          # Charger ky dans ebx
+        imull       (kernel_width), %ebx# ebx = ky * kernel_width
+        addl        (kx), %ebx          # ebx = ky * kernel_width + kx
 
-        pmovzxbd    (%edi, %ebx), %xmm1 # extend to 32-bit integers 4 pixels
+        pmovzxbd    (%edi, %ebx), %xmm1 # Charger 4 pixels du kernel (zéro-extension 32 bits)
 
-        psubd       %xmm1, %xmm0        # compute vectorized difference between pixels
-        pmulld      %xmm0, %xmm0        # compute vectorized square between pixels
+        psubd       %xmm1, %xmm0        # Calculer la différence vectorielle entre pixels
+        pmulld      %xmm0, %xmm0        # Calculer le carré des différences (vectorisé)
 
-        phaddd      %xmm0, %xmm0        # horizontally add components
-        phaddd      %xmm0, %xmm0        # Accumulate components
+        phaddd      %xmm0, %xmm0        # Addition horizontale des composantes
+        phaddd      %xmm0, %xmm0        # Accumuler les composantes
 
-        movd        %xmm0, %eax        
-        addl        %eax, -4(%ebp)
+        movd        %xmm0, %eax         # Déplacer le résultat dans eax
+        addl        %eax, -4(%ebp)      # Ajouter à sum
 
-        addl        $4, (kx)
-        movl        (kx), %eax
-        cmpl        (kernel_width), %eax
-        jl loop_x
+        addl        $4, (kx)            # Incrémenter kx de 4 (pixels traités)
+        movl        (kx), %eax          # Charger kx dans eax
+        cmpl        (kernel_width), %eax# Comparer kx à kernel_width
+        jl loop_x                       # Boucler si kx < kernel_width
 
-    incl        (ky)
-    movl        (ky), %eax
-    cmpl        (kernel_height), %eax
-    jl loop_y
+    incl        (ky)                    # Incrémenter ky
+    movl        (ky), %eax              # Charger ky dans eax
+    cmpl        (kernel_height), %eax   # Comparer ky à kernel_height
+    jl loop_y                           # Boucler si ky < kernel_height
 
-    movl    -4(%ebp), %eax
-    pop     %ebx
-    pop     %esi
-    pop     %edi
-    leave   
-    ret
-
-
-
+    movl    -4(%ebp), %eax              # Charger sum dans eax (valeur de retour)
+    pop     %ebx                        # Restaurer ebx
+    pop     %esi                        # Restaurer esi
+    pop     %edi                        # Restaurer edi
+    leave                               # Restaurer la pile
+    ret                                 # Retour de la fonction
+    
 #   @@@@@@@@@@@ ----------- @@@@@@@@@@
 
 
