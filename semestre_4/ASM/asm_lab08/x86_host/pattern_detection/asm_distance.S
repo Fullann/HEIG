@@ -26,6 +26,7 @@ asm_matrix_distance_simd:
     #KERNEL
     movl    12(%ebp), %eax                 # Charger l'adresse
     movl    8(%eax), %ecx                  # Charger la largeur 
+    movl    %ecx, (kernel_width)           # Stocker la largeur
     movl    4(%eax), %ecx                  # Charger la hauteur
     movl    %ecx, (kernel_height)          # Stocker la hauteur
     movl    12(%eax), %edi                 # Charger les donnée dans edi
