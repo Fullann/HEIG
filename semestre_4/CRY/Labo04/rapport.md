@@ -75,6 +75,7 @@ server {
     ssl_certificate /etc/nginx/CERTIF_CHAIN.pem;
     ssl_certificate_key /etc/nginx/IP.key;
     ssl_trusted_certificate /etc/nginx/Fullemann-TLS.crt;
+
     # Protocols supportés
     ssl_protocols TLSv1.2 TLSv1.3;
     
@@ -106,7 +107,8 @@ server {
         return 301 https://$host$request_uri;
 }
 ```
-
+## Commande testssl 
+testssl.sh --add-ca ./HEIG-VDRoot.crt  https://secuctfd.iict-heig-vd.in:44312
 ## Passage de fichier au serveur distant 
 ```bash
 scp -P 2212 ../TLS_client/CERTIF_CHAIN.pem labo@secuctfd.iict-heig-vd.in:~
@@ -131,6 +133,7 @@ HTTPS : https://secuctfd.iict-heig-vd.in:44312
 ```bash 
   #####################################################################
   testssl.sh version 3.2.0 from https://testssl.sh/
+  (a55acd4 2025-06-15 20:52:08)
 
   This program is free software. Distribution and modification under
   GPLv2 permitted. USAGE w/o ANY WARRANTY. USE IT AT YOUR OWN RISK!
@@ -141,7 +144,7 @@ HTTPS : https://secuctfd.iict-heig-vd.in:44312
   Using OpenSSL 3.5.0 (Apr 8 2025)  [~96 ciphers]
   on MacBook-Pro-de-Nathan:/opt/homebrew/opt/openssl@3/bin/openssl
 
- Start 2025-06-15 17:13:41        -->> 10.190.133.59:44312 (secuctfd.iict-heig-vd.in) <<--
+ Start 2025-06-15 22:16:04        -->> 10.190.133.59:44312 (secuctfd.iict-heig-vd.in) <<--
 
  rDNS (10.190.133.59):   --
  Service detected:       HTTP
@@ -195,27 +198,16 @@ TLSv1.3 (no server order, thus listed by strength)
 
  Testing robust forward secrecy (FS) -- omitting Null Authentication/Encryption, 3DES, RC4 
 
- FS is offered (OK)           TLS_AES_256_GCM_SHA384
-                              TLS_CHACHA20_POLY1305_SHA256
-                              ECDHE-RSA-AES256-GCM-SHA384
-                              ECDHE-RSA-CHACHA20-POLY1305
-                              TLS_AES_128_GCM_SHA256
+ FS is offered (OK)           TLS_AES_256_GCM_SHA384 TLS_CHACHA20_POLY1305_SHA256 ECDHE-RSA-AES256-GCM-SHA384 ECDHE-RSA-CHACHA20-POLY1305 TLS_AES_128_GCM_SHA256
                               ECDHE-RSA-AES128-GCM-SHA256 
  Elliptic curves offered:     prime256v1 secp384r1 secp521r1 X25519 X448 
- TLS 1.2 sig_algs offered:    RSA-PSS-RSAE+SHA512 RSA-PSS-RSAE+SHA384 
-                              RSA-PSS-RSAE+SHA256 RSA+SHA512 RSA+SHA384 
-                              RSA+SHA256 RSA+SHA224 RSA+SHA1 
- TLS 1.3 sig_algs offered:    RSA-PSS-RSAE+SHA512 RSA-PSS-RSAE+SHA384 
-                              RSA-PSS-RSAE+SHA256 
+ TLS 1.2 sig_algs offered:    RSA-PSS-RSAE+SHA512 RSA-PSS-RSAE+SHA384 RSA-PSS-RSAE+SHA256 RSA+SHA512 RSA+SHA384 RSA+SHA256 RSA+SHA224 RSA+SHA1 
+ TLS 1.3 sig_algs offered:    RSA-PSS-RSAE+SHA512 RSA-PSS-RSAE+SHA384 RSA-PSS-RSAE+SHA256 
 
  Testing server defaults (Server Hello) 
 
- TLS extensions (standard)    "max fragment length/#1" "EC point formats/#11"
-                              "application layer protocol negotiation/#16"
-                              "extended master secret/#23"
-                              "supported versions/#43" "key share/#51"
-                              "next protocol/#13172"
-                              "renegotiation info/#65281"
+ TLS extensions (standard)    "max fragment length/#1" "EC point formats/#11" "application layer protocol negotiation/#16" "extended master secret/#23"
+                              "supported versions/#43" "key share/#51" "next protocol/#13172" "renegotiation info/#65281"
  Session Ticket RFC 5077 hint no -- no lifetime advertised
  SSL Session ID support       yes
  Session Resumption           Tickets no, ID: yes
@@ -232,7 +224,7 @@ TLSv1.3 (no server order, thus listed by strength)
  Common Name (CN)             secuctfd.iict-heig-vd.in 
  subjectAltName (SAN)         secuctfd.iict-heig-vd.in 
  Trust (hostname)             Ok via SAN and CN (same w/o SNI)
- Chain of trust               NOT ok (self signed CA in chain)
+ Chain of trust               Ok   
  EV cert (experimental)       no 
  Certificate Validity (UTC)   99 >= 60 days (2025-06-15 11:15 --> 2025-09-23 11:15)
  ETS/"eTLS", visibility info  not present
@@ -332,17 +324,15 @@ TLSv1.3 (no server order, thus listed by strength)
 
  Rating specs (not complete)  SSL Labs's 'SSL Server Rating Guide' (version 2009q from 2020-01-30)
  Specification documentation  https://github.com/ssllabs/research/wiki/SSL-Server-Rating-Guide
- Protocol Support (weighted)  0 (0)
- Key Exchange     (weighted)  0 (0)
- Cipher Strength  (weighted)  0 (0)
- Final Score                  0
- Overall Grade                T
- Grade cap reasons            Grade capped to T. Issues with the chain of
-                                trust (self signed CA in chain)
+ Protocol Support (weighted)  100 (30)
+ Key Exchange     (weighted)  90 (27)
+ Cipher Strength  (weighted)  90 (36)
+ Final Score                  93
+ Overall Grade                A+
 
- Done 2025-06-15 17:14:33 [0053s] -->> 10.190.133.59:44312 (secuctfd.iict-heig-vd.in) <<--
+ Done 2025-06-15 22:17:02 [0060s] -->> 10.190.133.59:44312 (secuctfd.iict-heig-vd.in) <<--
   ```
-  > Le scan testssl.sh montre que TLS 1.2 et TLS 1.3 sont activés. Le grade T est normal car la chaîne de confiance (CERTIF_CHAIN.crt) contient le certificat de l'HEIG qui auto signé ce qui n'est pas accepté par testssl.
+  > Le scan testssl.sh montre que TLS 1.2 et TLS 1.3 sont activés. Que tous les paramètres sont Ok  Et on obtient le grade A+ avec un tres bon score (93)
 
 
 1. Quelle durée de validité avez-vous choisie pour le ce rtificat du serveur TLS ? Pourquoi ? Comment cette durée va-t-elle évoluer dans un futur proche ?
