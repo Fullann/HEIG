@@ -43,7 +43,7 @@ impl<'r> FromRequest<'r> for ConnectedUser {
         };
 
         cookies
-            .get_private(todo!())
+            .get_private("user_id")
             .and_then(|cookie| cookie.value().parse().ok())
             .and_then(|id| users.get(&id))
             .map(|user_db| ConnectedUser {
@@ -62,7 +62,7 @@ impl<'r> FromRequest<'r> for ConnectedAdministrator {
     async fn from_request(request: &'r rocket::Request<'_>) -> Outcome<Self, Self::Error> {
         let user = try_outcome!(request.guard::<ConnectedUser>().await);
 
-        if user.id == 44269255 {
+        if user.id == 70369150 {
             Outcome::Success(ConnectedAdministrator { user })
         } else {
             Outcome::Forward(Status::Unauthorized)

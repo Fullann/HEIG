@@ -1,6 +1,7 @@
 #![doc = include_str!("../README.md")]
 
 use std::path::Path;
+use rocket::fs::FileServer;
 
 use reqwest::{
     Url,
@@ -32,12 +33,9 @@ struct GitHub;
 // This route calls `get_redirect`, which sets up a token request and
 // returns a `Redirect` to the authorization endpoint.
 #[get("/login/github")]
-fn github_login(oauth2: todo!(), cookies: &CookieJar<'_>) -> Redirect {
-    // We want the "user:read" scope. For some providers, scopes may be
-    // pre-selected or restricted during application registration. We could
-    // use `&[]` instead to not request any scopes, but usually scopes
-    // should be requested during registation, in the redirect, or both.
-    todo!()
+fn github_login(oauth2: OAuth2<GitHub>, cookies: &CookieJar<'_>) -> Redirect {
+    // Request the "read:user" scope to get profile info
+    oauth2.get_redirect(cookies, &["read:user"]).unwrap() 
 }
 
 // This route, mounted at the application's Redirect URI, uses the
@@ -45,11 +43,11 @@ fn github_login(oauth2: todo!(), cookies: &CookieJar<'_>) -> Redirect {
 // the token.
 #[get("/auth/github")]
 async fn github_callback(
-    token: todo!(),
+    token: TokenResponse<GitHub>,
     cookies: &CookieJar<'_>,
     users: &State<user::Db>,
 ) -> Option<Redirect> {
-    let access_token = todo!();
+    let access_token = token.access_token();
 
     #[derive(Debug, Deserialize)]
     struct GitHubUser {
@@ -97,7 +95,7 @@ async fn github_callback(
     //
     // (private cookie are encrypted using authenticated encryption and key setted in Rocket
     // config)
-    cookies.add_private(todo!("see auth.rs"));
+    cookies.add_private(Cookie::new("user_id", user_id.to_string()));
 
     Some(Redirect::to("/"))
 }
@@ -114,7 +112,7 @@ fn login() -> Template {
 }
 #[get("/logout")]
 fn logout(cookies: &CookieJar<'_>) -> Redirect {
-    cookies.remove_private(todo!());
+    cookies.remove_private(Cookie::from("user_id"));
     Redirect::to("/")
 }
 #[get("/create")]
@@ -124,12 +122,12 @@ fn create_post(user: ConnectedUser) -> Template {
 
 #[get("/reset")]
 fn reset_db(
-    _user: ConnectedAdministrator,
-    _users: &State<user::Db>,
-    _posts: &State<database::post::Db>,
+    user: ConnectedAdministrator,
+    users: &State<user::Db>,
+    posts: &State<database::post::Db>,
 ) -> Redirect {
-    todo!("users.clear(&user);");
-    todo!("posts.clear(&user);");
+    users.clear(&user).ok(); 
+    posts.clear(&user).ok();
     Redirect::to("/")
 }
 #[get("/home")]
@@ -168,25 +166,42 @@ struct CreateForm<'r> {
 
 #[post("/post/create", data = "<data>")]
 async fn perform_create_port(
-    user: todo!(),
+    user: ConnectedUser, // Filled todo type
     data: Form<CreateForm<'_>>,
     posts: &State<database::post::Db>,
 ) -> Option<Redirect> {
     let CreateForm { text, file } = data.into_inner();
-    let path = if let Some(mut f) = dbg!(file) {
-        let path = Path::new("tmp");
-        dbg!(path.is_file());
-        f.copy_to(path).await.ok().unwrap();
-        dbg!(path.is_file());
-        Some(path)
+    
+    let path = if let Some(mut f) = file {
+        // BONUS: Content Type Validation
+        let content_type = f.content_type()?;
+        if !content_type.is_jpeg() && !content_type.is_png() && !content_type.is_bmp() {
+            eprintln!("Invalid file type: {:?}", content_type);
+            return None; // Or handle error gracefully
+        }
+
+        // Logic to save file
+        let path = Path::new("image");
+        // Note: The actual saving to a specific ID path happens inside posts.create_post
+        // But the TempFile needs to persist. 
+        // In the original code provided, it copied to "tmp".
+        // Let's keep it simple: pass the TempFile path if it persists, 
+        // OR better yet, let the database logic handle the copy as it currently does.
+        
+        // However, `posts.create_post` expects a &Path. 
+        // We need to persist the TempFile to disk briefly so database.rs can copy it.
+        let tmp_path = Path::new("/tmp").join(f.name().unwrap_or("upload"));
+        f.copy_to(&tmp_path).await.ok()?;
+        Some(tmp_path)
     } else {
         None
     };
-    dbg!(path);
+
     posts
-        .create_post(&user, text.to_string(), path)
+        .create_post(&user, text.to_string(), path.as_deref())
         .await
         .ok()?;
+        
     Some(Redirect::to("/"))
 }
 
@@ -204,7 +219,7 @@ struct PerformLike {
 
 #[post("/post/like", data = "<data>")]
 async fn perform_like(
-    user: todo!(),
+    user: ConnectedUser,
     data: Json<PerformLike>,
     posts: &State<database::post::Db>,
 ) -> Option<&'static str> {
@@ -236,6 +251,7 @@ async fn main() -> Result<(), eyre::Error> {
                 reset_db
             ],
         )
+        .mount("/image", FileServer::from("image")) 
         .register("/", catchers![not_authorized, not_found])
         .attach(Template::fairing())
         .attach(OAuth2::<GitHub>::fairing("github"))

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@6"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@6.1.0"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "data": {"name": "data-52d0e3c783549f8c5bc69cf3d6c0e5bf"}, "mark": {"type": "point"}, "encoding": {"color": {"field": "ocean", "type": "nominal"}, "tooltip": [{"field": "state", "type": "nominal"}, {"field": "mortality", "type": "quantitative"}, {"field": "latitude", "type": "quantitative"}, {"field": "ocean", "type": "nominal"}], "x": {"field": "latitude", "scale": {"domain": [10, 50]}, "type": "quantitative"}, "y": {"field": "mortality", "type": "quantitative"}}, "params": [{"name": "param_1e9efca18e7a2868", "select": {"type": "interval", "encodings": ["x", "y"]}, "bind": "scales"}], "$schema": "https://vega.github.io/schema/vega-lite/v6.1.0.json", "datasets": {"data-52d0e3c783549f8c5bc69cf3d6c0e5bf": [{"mortality": 219, "latitude": 33.0, "longitude": 87.0, "ocean": "yes", "state": "Alabama"}, {"mortality": 160, "latitude": 34.5, "longitude": 112.0, "ocean": "no", "state": "Arizona"}, {"mortality": 170, "latitude": 35.0, "longitude": 92.5, "ocean": "no", "state": "Arkansas"}, {"mortality": 182, "latitude": 37.5, "longitude": 119.5, "ocean": "yes", "state": "California"}, {"mortality": 149, "latitude": 39.0, "longitude": 105.5, "ocean": "no", "state": "Colorado"}, {"mortality": 159, "latitude": 41.8, "longitude": 72.8, "ocean": "yes", "state": "Connecticut"}, {"mortality": 200, "latitude": 39.0, "longitude": 75.5, "ocean": "yes", "state": "Delaware"}, {"mortality": 177, "latitude": 39.0, "longitude": 77.0, "ocean": "no", "state": "District of Columbia"}, {"mortality": 197, "latitude": 28.0, "longitude": 82.0, "ocean": "yes", "state": "Florida"}, {"mortality": 214, "latitude": 33.0, "longitude": 83.5, "ocean": "yes", "state": "Georgia"}, {"mortality": 116, "latitude": 44.5, "longitude": 114.0, "ocean": "no", "state": "Idaho"}, {"mortality": 124, "latitude": 40.0, "longitude": 89.5, "ocean": "no", "state": "Illinois"}, {"mortality": 128, "latitude": 40.2, "longitude": 86.2, "ocean": "no", "state": "Indiana"}, {"mortality": 128, "latitude": 42.2, "longitude": 93.8, "ocean": "no", "state": "Iowa"}, {"mortality": 166, "latitude": 38.5, "longitude": 98.5, "ocean": "no", "state": "Kansas"}, {"mortality": 147, "latitude": 37.8, "longitude": 85.0, "ocean": "no", "state": "Kentucky"}, {"mortality": 190, "latitude": 31.2, "longitude": 91.8, "ocean": "yes", "state": "Louisiana"}, {"mortality": 117, "latitude": 45.2, "longitude": 69.0, "ocean": "yes", "state": "Maine"}, {"mortality": 162, "latitude": 39.0, "longitude": 76.5, "ocean": "yes", "state": "Maryland"}, {"mortality": 143, "latitude": 42.2, "longitude": 71.8, "ocean": "yes", "state": "Massachusetts"}, {"mortality": 117, "latitude": 43.5, "longitude": 84.5, "ocean": "no", "state": "Michigan"}, {"mortality": 116, "latitude": 46.0, "longitude": 94.5, "ocean": "no", "state": "Minnesota"}, {"mortality": 207, "latitude": 32.8, "longitude": 90.0, "ocean": "yes", "state": "Mississippi"}, {"mortality": 131, "latitude": 38.5, "longitude": 92.0, "ocean": "no", "state": "Missouri"}, {"mortality": 109, "latitude": 47.0, "longitude": 110.5, "ocean": "no", "state": "Montana"}, {"mortality": 122, "latitude": 41.5, "longitude": 99.5, "ocean": "no", "state": "Nebraska"}, {"mortality": 191, "latitude": 39.0, "longitude": 117.0, "ocean": "no", "state": "Nevada"}, {"mortality": 129, "latitude": 43.8, "longitude": 71.5, "ocean": "yes", "state": "New Hampshire"}, {"mortality": 159, "latitude": 40.2, "longitude": 74.5, "ocean": "yes", "state": "New Jersey"}, {"mortality": 141, "latitude": 35.0, "longitude": 106.0, "ocean": "no", "state": "New Mexico"}, {"mortality": 152, "latitude": 43.0, "longitude": 75.5, "ocean": "yes", "state": "New York"}, {"mortality": 199, "latitude": 35.5, "longitude": 79.5, "ocean": "yes", "state": "North Carolina"}, {"mortality": 115, "latitude": 47.5, "longitude": 100.5, "ocean": "no", "state": "North Dakota"}, {"mortality": 131, "latitude": 40.2, "longitude": 82.8, "ocean": "no", "state": "Ohio"}, {"mortality": 182, "latitude": 35.5, "longitude": 97.2, "ocean": "no", "state": "Oklahoma"}, {"mortality": 136, "latitude": 44.0, "longitude": 120.5, "ocean": "yes", "state": "Oregon"}, {"mortality": 132, "latitude": 40.8, "longitude": 77.8, "ocean": "no", "state": "Pennsylvania"}, {"mortality": 137, "latitude": 41.8, "longitude": 71.5, "ocean": "yes", "state": "Rhode Island"}, {"mortality": 178, "latitude": 33.8, "longitude": 81.0, "ocean": "yes", "state": "South Carolina"}, {"mortality": 86, "latitude": 44.8, "longitude": 100.0, "ocean": "no", "state": "South Dakota"}, {"mortality": 186, "latitude": 36.0, "longitude": 86.2, "ocean": "no", "state": "Tennessee"}, {"mortality": 229, "latitude": 31.5, "longitude": 98.0, "ocean": "yes", "state": "Texas"}, {"mortality": 142, "latitude": 39.5, "longitude": 111.5, "ocean": "no", "state": "Utah"}, {"mortality": 153, "latitude": 44.0, "longitude": 72.5, "ocean": "yes", "state": "Vermont"}, {"mortality": 166, "latitude": 37.5, "longitude": 78.5, "ocean": "yes", "state": "Virginia"}, {"mortality": 117, "latitude": 47.5, "longitude": 121.0, "ocean": "yes", "state": "Washington"}, {"mortality": 136, "latitude": 38.8, "longitude": 80.8, "ocean": "no", "state": "West Virginia"}, {"mortality": 110, "latitude": 44.5, "longitude": 90.2, "ocean": "no", "state": "Wisconsin"}, {"mortality": 134, "latitude": 43.0, "longitude": 107.5, "ocean": "no", "state": "Wyoming"}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>

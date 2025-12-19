@@ -48,16 +48,21 @@ Génère l'archive dans le répertoire `target/package/`.
 > Répondez aux questions directement dans ce fichier là.
 
 1. Quel serait l'impact si on se fait voler notre secret client (et client id) ?
+   > Le client id est public et sert uniquement à identifier l’application OAuth2. Mais pour le secret client s’il est volé, un attaquant pourrait se faire passer pour l’application légitime a notre place, échanger des authorizations codes contre des access tokens et accéder aux ressources des utilisateurs celon ceux qui sont autorisés par les scopes. Ce qui permettrais de voler des donnée, faire des actions au nom des utilisateurs.
 
 2. Comment peut-on protéger notre secret client, afin d'éviter qu'il soit publier ou voler ?
+   >Il faut le stocké dans des variables d’environnement, restreindre les redirections OAuth et limité les scopes au minimum nécessaire. Si il est leak il faut immédiatement le révoquer et en générer un nouveau.
 
 3. Quels est la différences entre OAuth2 et LDAP ?
+   > OAuth2 est un protocole d'utilisation qui permet à des applications tierces d'accéder aux ressources d'un utilisateur sans avoir à partager ses identifiants. LDAP est un protocole d'annuaire qui permet de stocker et de récupérer des informations sur les utilisateurs et les ressources dans un réseau. OAuth2 est utilisé pour l'authentification et l'autorisation. LDAP lui est utilisé pour la gestion des utilisateurs et des ressources.
 
 4. Est-ce que le mot de passe transite par votre serveur ? Est-ce qu'on peut le voler ?
+   > Non car on saisie le mot de passe sur le site de Github (dans notre cas). L'application elle recoit uniquement un token d'accès. Donc c'est impossible de voler le mot de passe avec notre aplication.
 
 5. Si vous êtes mal intentionné et que vous administrez un serveur utilisant l'OAuth2 Github. Comment ferriez-vous pour obtenir plus d'accès au nom de vos utilisateur ? Et donnez des exemples.
+>  > Pour obtenir plus d'accès au nom des utilisateurs, je pourrais modifier les scopes demandés lors de l'authentification OAuth2 pour inclure des permissions supplémentaires. Par exemple, je pourrais demander l'accès en écriture aux dépôts GitHub des utilisateurs en ajoutant le scope `repo`, ce qui me permettrait de créer, modifier ou supprimer des dépôts au nom des utilisateurs.
 
-6. Pour les 2 captures d'écran d'écran de consentement de google, indiqué quels
+1. Pour les 2 captures d'écran d'écran de consentement de google, indiqué quels
    scopes on probablement été demander par le site web.
 
    - [image 1](scope-01.png) ![](scope-01.png) ![](../../../scope-01.png)
@@ -74,6 +79,9 @@ Génère l'archive dans le répertoire `target/package/`.
    - `https://www.googleapis.com/auth/gmail`
    - `openid`
    - `profile`
+
+  > Image 1 : `openid`, `profile`, `email`, `https://www.googleapis.com/auth/drive.photos.readonly`
+  > Image 2 : `openid`, `profile`, `email`, `https://www.googleapis.com/auth/documents`, `https://www.googleapis.com/auth/drive.file`, `https://www.googleapis.com/auth/drive.photos.readonly`, `https://www.googleapis.com/auth/drive.readonly`, `https://www.googleapis.com/auth/drive`, `https://www.googleapis.com/auth/gmail`
 
 ## Tâches principales
 

@@ -1,0 +1,4 @@
+\providecommand{\Pageref}[1]{\hfill p.\pageref{#1}}
+ [**Utilisation de l'Intelligence Artificielle**](#Definition*-1.1)\Pageref{Definition*-1.1}
+
+ [**Le rapport doit**](#Conjecture*-11.1)\Pageref{Conjecture*-11.1}
