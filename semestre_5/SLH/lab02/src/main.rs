@@ -166,30 +166,19 @@ struct CreateForm<'r> {
 
 #[post("/post/create", data = "<data>")]
 async fn perform_create_port(
-    user: ConnectedUser, // Filled todo type
+    user: ConnectedUser,
     data: Form<CreateForm<'_>>,
     posts: &State<database::post::Db>,
 ) -> Option<Redirect> {
     let CreateForm { text, file } = data.into_inner();
     
     let path = if let Some(mut f) = file {
-        // BONUS: Content Type Validation
         let content_type = f.content_type()?;
         if !content_type.is_jpeg() && !content_type.is_png() && !content_type.is_bmp() {
             eprintln!("Invalid file type: {:?}", content_type);
-            return None; // Or handle error gracefully
+            return None;
         }
 
-        // Logic to save file
-        let path = Path::new("image");
-        // Note: The actual saving to a specific ID path happens inside posts.create_post
-        // But the TempFile needs to persist. 
-        // In the original code provided, it copied to "tmp".
-        // Let's keep it simple: pass the TempFile path if it persists, 
-        // OR better yet, let the database logic handle the copy as it currently does.
-        
-        // However, `posts.create_post` expects a &Path. 
-        // We need to persist the TempFile to disk briefly so database.rs can copy it.
         let tmp_path = Path::new("/tmp").join(f.name().unwrap_or("upload"));
         f.copy_to(&tmp_path).await.ok()?;
         Some(tmp_path)

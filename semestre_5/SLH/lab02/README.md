@@ -1,7 +1,7 @@
 <!--
 vim: spelllang=fr
 -->
-# SLH 2025 - Lab #2
+# SLH 2025 - Lab #2 - Nathan Füllemann
 
 - Laboratoire noté.
 - Veuillez rendre **votre code** et le **README.md** répondant aux questions du
@@ -80,8 +80,8 @@ Génère l'archive dans le répertoire `target/package/`.
    - `openid`
    - `profile`
 
-  > Image 1 : `openid`, `profile`, `email`, `https://www.googleapis.com/auth/drive.photos.readonly`
-  > Image 2 : `openid`, `profile`, `email`, `https://www.googleapis.com/auth/documents`, `https://www.googleapis.com/auth/drive.file`, `https://www.googleapis.com/auth/drive.photos.readonly`, `https://www.googleapis.com/auth/drive.readonly`, `https://www.googleapis.com/auth/drive`, `https://www.googleapis.com/auth/gmail`
+  > Image 1 : Seulement celui ci `https://www.googleapis.com/auth/drive.file`
+  > Image 2 : c est un login donc `openid`, `profile` et `email`
 
 ## Tâches principales
 

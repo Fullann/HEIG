@@ -1,1 +1,9 @@
-{}
+{
+  "1": {
+    "id": 1,
+    "author": 70369150,
+    "text": "test",
+    "image_path": "image/1",
+    "likes": 0
+  }
+}
