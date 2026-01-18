@@ -1,0 +1,35 @@
+{
+  "patients": {},
+  "reports": {
+    "54af8504-24f3-494d-a2fa-563a4065e4b2": {
+      "id": "54af8504-24f3-494d-a2fa-563a4065e4b2",
+      "date": "2026-01-18T10:48:23.318127Z",
+      "author": "9a5ed281-a92e-43d7-aa00-f1688b83e50e",
+      "patient": "7d908530-dd7a-4d01-b233-b3b4621aee0d",
+      "keywords": [
+        "cancer"
+      ],
+      "contents": "Cancer\n"
+    },
+    "a4f22727-c346-4b5a-af49-e24d12077f88": {
+      "id": "a4f22727-c346-4b5a-af49-e24d12077f88",
+      "date": "2026-01-18T10:26:02.516406Z",
+      "author": "3d4eea80-e5e4-47fe-a388-a79667419a42",
+      "patient": "7d908530-dd7a-4d01-b233-b3b4621aee0d",
+      "keywords": [
+        "brain"
+      ],
+      "contents": "Brain.\n"
+    },
+    "fcb20adf-a286-4be5-bbf9-a17691567bdc": {
+      "id": "fcb20adf-a286-4be5-bbf9-a17691567bdc",
+      "date": "2026-01-18T10:25:42.061154Z",
+      "author": "3d4eea80-e5e4-47fe-a388-a79667419a42",
+      "patient": "7d908530-dd7a-4d01-b233-b3b4621aee0d",
+      "keywords": [
+        "heart"
+      ],
+      "contents": "Heart\n"
+    }
+  }
+}
