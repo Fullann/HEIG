@@ -1,0 +1,167 @@
+From 568805f83f87f937a5ad5c78a539030925e799bb Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nathan=20F=C3=BCllemann?= <nathan@fullann.ch>
+Date: Tue, 20 Jan 2026 09:55:32 +0100
+Subject: [PATCH] End of lab14
+
+---
+ usr/host/fins.c | 65 +++++++++++++++++++++++++++++++++++++++++++++++--
+ usr/host/vmem.c | 51 ++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 112 insertions(+), 4 deletions(-)
+
+diff --git a/usr/host/fins.c b/usr/host/fins.c
+index 0272406..5f26987 100644
+--- a/usr/host/fins.c
++++ b/usr/host/fins.c
+@@ -8,6 +8,8 @@
+ #include <time.h>
+ #include <string.h>
+ 
++void recursive_walk(const char *current_path, int current_depth, unsigned *max_depth, unsigned *nb_files, unsigned *full_size);
++
+ void walk_dir(const char *path, unsigned *max_depth, unsigned *nb_files, unsigned *full_size);
+ 
+ int main(int argc, char *argv[]) {
+@@ -27,5 +29,64 @@ int main(int argc, char *argv[]) {
+ 
+ void walk_dir(const char *path, unsigned *max_depth, unsigned *nb_files, unsigned *full_size)
+ {
+-	
+-}
+\ No newline at end of file
++    *max_depth = 0;
++    *nb_files = 0;
++    *full_size = 0;
++
++    struct stat sb;
++
++    //si fichier existe
++    if (lstat(path, &sb) == -1) {
++        perror("No dir");
++        return;
++    }
++
++    recursive_walk(path, 0, max_depth, nb_files, full_size);
++}
++
++void recursive_walk(const char *current_path, int current_depth, unsigned *max_depth, unsigned *nb_files, unsigned *full_size)
++{
++    DIR *dp;
++    struct dirent *entry;
++    struct stat sb;
++    char next_path[1024];
++
++    if ((unsigned)current_depth > *max_depth) {
++        *max_depth = (unsigned)current_depth;
++    }
++
++    // ouvrir le dossier
++    if (!(dp = opendir(current_path))) {
++        perror("opendir");
++        return;
++    }
++
++
++    while ((entry = readdir(dp)) != NULL) {
++        // on ignore .. et .
++        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
++            continue;
++        }
++        // construction du chemin
++        snprintf(next_path, sizeof(next_path), "%s/%s", current_path, entry->d_name);
++
++        // recup infos fichier
++        if (lstat(next_path, &sb) == -1) {
++            perror("child infos");
++            continue;
++        }
++
++        // si c est un dossier
++        if (S_ISDIR(sb.st_mode)) {
++            // on relance la recursion
++            recursive_walk(next_path, current_depth + 1, max_depth, nb_files, full_size);
++        } 
++        // sinon c est un fichier
++        else if (S_ISREG(sb.st_mode)) {
++            (*nb_files)++;
++            (*full_size) += sb.st_size;
++        }
++    }
++
++    closedir(dp);
++}
+diff --git a/usr/host/vmem.c b/usr/host/vmem.c
+index c0d8402..eb439da 100644
+--- a/usr/host/vmem.c
++++ b/usr/host/vmem.c
+@@ -350,7 +350,7 @@ int test()
+         page_mod(&vmem, 0x4, test_paddr[3], 6);
+         //Write-read value in new process
+         store(&vmem, 0x4, 0x54637281, 4);
+-        load(&vmem, 0x0, &val, 4);
++        load(&vmem, 0x4, &val, 4);
+         if(val != 0x54637281)
+         {
+             puts("Process write-read FAIL");
+@@ -446,11 +446,58 @@ int load(vmem *mem, short vaddr, unsigned *val, unsigned size)
+ 
+ int create_process(vmem *mem, short pt_addr)
+ {
+-    return -1;
++    pcb *pcb_table = (pcb *)(mem->pmem + mem->pcb_addr);
++    int max_procs = PAGE_SIZE / sizeof(pcb);
++    int free_index = -1;
++    short new_pid = 0;
++
++    //trouver pid max actuel pour le suivant 
++    for (int i = 0; i < max_procs; i++) {
++        // si slot libre
++        if (pcb_table[i].pid == -1) {
++            if (free_index == -1) {
++                free_index = i;
++            }
++        } else {
++            // si slot occupé est ce que c est le plus grand pid
++            if (pcb_table[i].pid > new_pid) {
++                new_pid = pcb_table[i].pid;
++            }
++        }
++    }
++
++    // si plus de place
++    if (free_index == -1) {
++        return -1;
++    }
++
++    new_pid++;
++
++    // remplir le PCB
++    pcb_table[free_index].pid = new_pid;
++    pcb_table[free_index].pt_addr = pt_addr;
++
++    return new_pid;
+ }
+ 
+ int switch_process(vmem *mem, int pid)
+ {
++    pcb *pcb_table = (pcb *)(mem->pmem + mem->pcb_addr);
++    int max_procs = PAGE_SIZE / sizeof(pcb);
++
++    // trouver pid
++    for (int i = 0; i < max_procs; i++) {
++        //si valide
++        if (pcb_table[i].pid == pid) {
++            // mettre a jour le registre
++            mem->pt_addr = pcb_table[i].pt_addr;
++            return 0;
++        }
++    }
++
+     return -1;
+ }
+ 
++// REPONSE : table PCB = 64 octets 
++// struct PCB = 4 octets (short pid + short pt_addr).
++// Donc Max Processus = 64 / 4 = 16 processus
+-- 
+GitLab
+

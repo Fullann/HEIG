@@ -1,0 +1,196 @@
+From cbf4931769f2e323e223ac7c3c9a697aad4f082b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nathan=20F=C3=BCllemann?= <nathan@fullann.ch>
+Date: Tue, 28 Oct 2025 17:44:01 +0100
+Subject: [PATCH] End of lab06
+
+---
+ a.out                          |  0
+ so3/include/process.h          |  1 +
+ so3/include/syscall.h          |  1 +
+ so3/kernel/process.c           | 13 +++++++++++++
+ so3/kernel/syscalls.c          |  4 ++++
+ usr/lib/libc/crt0.S            |  1 +
+ usr/lib/libc/include/syscall.h |  7 +++++++
+ usr/src/CMakeLists.txt         |  2 ++
+ usr/src/sh.c                   |  6 +++++-
+ usr/src/test_parentpid.c       | 30 ++++++++++++++++++++++++++++++
+ 10 files changed, 64 insertions(+), 1 deletion(-)
+ create mode 100644 a.out
+ create mode 100644 usr/src/test_parentpid.c
+
+diff --git a/a.out b/a.out
+new file mode 100644
+index 0000000..e69de29
+diff --git a/so3/include/process.h b/so3/include/process.h
+index 24d3a8d..436eea0 100644
+--- a/so3/include/process.h
++++ b/so3/include/process.h
+@@ -134,6 +134,7 @@ void add_page_to_proc(pcb_t *pcb, page_t *page);
+ void create_root_process(void);
+ 
+ uint32_t do_getpid(void);
++uint32_t do_getparentpid(void);
+ 
+ int do_execve(const char *filename, char **argv, char **envp);
+ int do_fork(void);
+diff --git a/so3/include/syscall.h b/so3/include/syscall.h
+index 7445bd8..f7e5c02 100644
+--- a/so3/include/syscall.h
++++ b/so3/include/syscall.h
+@@ -49,6 +49,7 @@
+ #define SYSCALL_FCNTL 21
+ #define SYSCALL_DUP 22
+ #define SYSCALL_DUP2 23
++#define SYSCALL_GETPARENTPID 24
+ 
+ #define SYSCALL_SOCKET 26
+ #define SYSCALL_BIND 27
+diff --git a/so3/kernel/process.c b/so3/kernel/process.c
+index 44ea5c5..3e292d3 100644
+--- a/so3/kernel/process.c
++++ b/so3/kernel/process.c
+@@ -963,6 +963,19 @@ uint32_t do_getpid(void)
+ 	return current()->pcb->pid;
+ }
+ 
++uint32_t do_getparentpid(void) {
++    pcb_t *parent;
++    
++    /* Récupérer le processus parent du processus courant */
++    parent = current()->pcb->parent;
++    
++    /* Si le parent existe, retourner son PID */
++    if (parent != NULL)
++        return parent->pid;
++    
++    return 1;
++}
++
+ /*
+  * Waitpid implementation - do_waitpid() does the following operations:
+  * - Suspend the current process until the child process finished its execution
+diff --git a/so3/kernel/syscalls.c b/so3/kernel/syscalls.c
+index bfba35b..329a7d4 100644
+--- a/so3/kernel/syscalls.c
++++ b/so3/kernel/syscalls.c
+@@ -81,6 +81,10 @@ long syscall_handle(syscall_args_t *syscall_args)
+ 		result = do_getpid();
+ 		break;
+ 
++	case SYSCALL_GETPARENTPID:
++		result = do_getparentpid();
++		break;
++		
+ 	case SYSCALL_GETTIMEOFDAY:
+ 		/* a->args[1] contains a pointer to the timezone structure. */
+ 		/* Currently, this is not supported yet. */
+diff --git a/usr/lib/libc/crt0.S b/usr/lib/libc/crt0.S
+index 9652151..cdddc34 100755
+--- a/usr/lib/libc/crt0.S
++++ b/usr/lib/libc/crt0.S
+@@ -167,6 +167,7 @@ SYSCALLSTUB sys_recvfrom,		syscallRecvfrom		6
+ SYSCALLSTUB sys_setsockopt,		syscallSetsockopt	5
+ SYSCALLSTUB sys_sendto,			syscallSendTo		6
+ SYSCALLSTUB sys_getpid,			syscallGetpid		0
++SYSCALLSTUB sys_getparentpid,			syscallGetparrentpid		0
+ 
+ SYSCALLSTUB sys_gettimeofday,		syscallGetTimeOfDay	2
+ SYSCALLSTUB sys_settimeofday,		syscallSetTimeOfDay	2
+diff --git a/usr/lib/libc/include/syscall.h b/usr/lib/libc/include/syscall.h
+index 33c301e..ad228da 100644
+--- a/usr/lib/libc/include/syscall.h
++++ b/usr/lib/libc/include/syscall.h
+@@ -50,6 +50,9 @@
+ #define syscallFcntl			21
+ #define syscallDup			22
+ #define syscallDup2			23
++
++#define syscallGetparrentpid		24
++
+ #define syscallSchedSetParam 		25
+ #define syscallSocket 			26
+ #define syscallBind			27
+@@ -525,6 +528,10 @@ int sys_ioctl(int fd, int cmd, void *val);
+  */
+ int sys_getpid();
+ 
++/**
++ * getParentPID syscall
++ */
++int sys_getparentpid();
+ /**
+ * Time management - time zone is not supported yet.
+ */
+diff --git a/usr/src/CMakeLists.txt b/usr/src/CMakeLists.txt
+index d77acb8..2a94634 100644
+--- a/usr/src/CMakeLists.txt
++++ b/usr/src/CMakeLists.txt
+@@ -7,10 +7,12 @@ add_executable(sh.elf sh.c)
+ add_executable(ls.elf ls.c)
+ add_executable(echo.elf echo.c)
+ add_executable(cat.elf cat.c)
++add_executable(test_parentpid.elf test_parentpid.c)
+ 
+ target_link_libraries(init.elf c)
+ target_link_libraries(sh.elf c)
+ target_link_libraries(ls.elf c)
+ target_link_libraries(echo.elf c)
+ target_link_libraries(cat.elf c)
++target_link_libraries(test_parentpid.elf c)
+ 
+diff --git a/usr/src/sh.c b/usr/src/sh.c
+index 07f5b2d..e864422 100644
+--- a/usr/src/sh.c
++++ b/usr/src/sh.c
+@@ -214,7 +214,11 @@ void process_cmd(void)
+ 		/* We are looking for an executable with .elf extension */
+ 		strcat(filename, ".elf");
+ 
+-		if (execv(filename, argv) == -1) {
++		char *envp[2];
++		envp[0] = "CHILD=YES"; // variable pour l'enfant de base
++		envp[1] = NULL;
++
++		if (execve(filename, argv, envp) == -1) {
+ 			printf("%s: exec failed.\n", argv[0]);
+ 			exit(-1);
+ 		}
+diff --git a/usr/src/test_parentpid.c b/usr/src/test_parentpid.c
+new file mode 100644
+index 0000000..9d2d4f2
+--- /dev/null
++++ b/usr/src/test_parentpid.c
+@@ -0,0 +1,30 @@
++#include <stdio.h>
++#include <syscall.h>
++
++int main(void) {
++    int pid;
++    int status;
++    
++    pid = sys_fork();
++    
++    if (pid < 0) {
++        printf("Err fork");
++        return 1;
++    }
++    else if (pid == 0) {
++        /* l'enfant est executé directement */
++        printf("ENFANT: Mon PID est %d, le PID de mon parent est %d\n", 
++               sys_getpid(), sys_getparentpid());
++        
++        return 0;
++    }
++    else {
++        sys_waitpid(pid, &status, 0);
++        
++        /* Le parent attend l'enfant grace à sys_waitpid car il attend le changement d état de l'enfant */ 
++        printf("PARENT: Mon PID est %d, le PID de mon parent est %d\n", 
++               sys_getpid(), sys_getparentpid());
++    }
++    
++    return 0;
++}
+-- 
+GitLab
+

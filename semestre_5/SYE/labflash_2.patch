@@ -1,0 +1,221 @@
+From 5261cf7ea81002eda1857b7315d9e6c81d505703 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nathan=20F=C3=BCllemann?= <nathan@fullann.ch>
+Date: Tue, 2 Dec 2025 10:07:14 +0100
+Subject: [PATCH] End of lab10
+
+---
+ rapport.md          |   6 +-
+ usr/host/myfile.txt |   1 +
+ usr/host/myftp.c    | 160 +++++++++++++++++++++++++++++++++++++++++++-
+ usr/host/new.txt    |   1 +
+ 4 files changed, 166 insertions(+), 2 deletions(-)
+ create mode 100644 usr/host/myfile.txt
+ create mode 100644 usr/host/new.txt
+
+diff --git a/rapport.md b/rapport.md
+index d7cf9d6..cb71e89 100644
+--- a/rapport.md
++++ b/rapport.md
+@@ -1 +1,5 @@
+-# Rapport SYE
+\ No newline at end of file
++# Rapport SYE Labo10
++commande. pour executé le labo 
++./build.sh
++
++./build/myftp.elf 5000 myfile.txt & sleep 1; ./build/myftp.elf -s 127.0.0.1 5000 new.txt
+\ No newline at end of file
+diff --git a/usr/host/myfile.txt b/usr/host/myfile.txt
+new file mode 100644
+index 0000000..2ea493d
+--- /dev/null
++++ b/usr/host/myfile.txt
+@@ -0,0 +1 @@
++labo10 flash
+diff --git a/usr/host/myftp.c b/usr/host/myftp.c
+index 9b00df7..cfbbfb5 100644
+--- a/usr/host/myftp.c
++++ b/usr/host/myftp.c
+@@ -1,5 +1,159 @@
+ #include <stdlib.h>
+ #include <stdio.h>
++#include <unistd.h>
++#include <sys/socket.h>
++#include <netinet/in.h>
++#include <arpa/inet.h>
++#include <pthread.h>
++#include <sys/wait.h>
++#include <stdint.h>
++
++typedef struct {
++    const char *filename;
++    char *buffer;
++    uint32_t fileSize;
++} FileData;
++
++void *file_reader_thread(void *arg) {
++    FileData *data = (FileData *)arg;
++    FILE *f = fopen(data->filename, "rb");
++    
++    if (!f) { perror("File open error"); exit(1); }
++
++    fseek(f, 0, SEEK_END);
++    data->fileSize = ftell(f);
++    fseek(f, 0, SEEK_SET);
++
++    data->buffer = malloc(data->fileSize);
++    fread(data->buffer, 1, data->fileSize, f);
++    fclose(f);
++    pthread_exit(NULL);
++}
++
++int server_create(int port, const char *filename) {
++    int listenfd = 0, connfd = 0;
++    struct sockaddr_in serv_addr = {0};
++
++    listenfd = socket(AF_INET, SOCK_STREAM, 0);
++	
++    int opt = 1;
++    setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
++
++    serv_addr = (struct sockaddr_in){
++		.sin_family = AF_INET,
++		.sin_addr.s_addr = htonl(INADDR_ANY),
++		.sin_port = htons(port),
++	};
++
++    if (bind(listenfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
++	{
++		close(listenfd);
++		return -1;
++	}
++    if (listen(listenfd, 1) < 0)
++	{
++		close(listenfd);
++		return -1;
++	}
++    
++    printf("Server listening on port %d...\n", port);
++
++    connfd = accept(listenfd, NULL, NULL);
++    if (connfd < 0)
++	{
++		close(listenfd);
++		return -1;
++	}
++
++    pthread_t tid;
++    FileData fileData = {.filename = filename};
++    pthread_create(&tid, NULL, file_reader_thread, &fileData);
++    pthread_join(tid, NULL);
++
++    write(connfd, &fileData.fileSize, sizeof(uint32_t));
++    
++    size_t totalSent = 0;
++    while(totalSent < fileData.fileSize) {
++        ssize_t ret = write(connfd, fileData.buffer + totalSent, fileData.fileSize - totalSent);
++        if (ret <= 0) break;
++        totalSent += ret;
++    }
++
++    free(fileData.buffer);
++    close(connfd);
++    printf("Transfer done\n");
++	return connfd;
++}
++
++int client_connect(const char *ip, int port, const char *filename) {
++    int sockfd = 0;
++   	struct sockaddr_in serv_addr;
++
++    sockfd = socket(AF_INET, SOCK_STREAM, 0);
++	if (sockfd < 0)
++	{
++		return -1;
++	}
++
++    serv_addr = (struct sockaddr_in){
++		.sin_family = AF_INET,
++		.sin_port = htons(port),
++	};
++
++   if (inet_pton(AF_INET, ip, &serv_addr.sin_addr) <= 0)
++	{
++		return -1;
++	}
++
++    if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
++        perror("Connection failed");
++        exit(1);
++    }
++
++    uint32_t fileSize;
++    if (read(sockfd, &fileSize, sizeof(fileSize)) <= 0) exit(1);
++
++    int pfd[2];
++    pipe(pfd);
++
++    if (fork() == 0) {
++        // FILS
++        close(pfd[1]);
++        close(sockfd);
++        FILE *f = fopen(filename, "wb");
++        
++        char buf[1024];
++        ssize_t n;
++        while ((n = read(pfd[0], buf, sizeof(buf))) > 0) {
++            fwrite(buf, 1, n, f);
++        }
++        fclose(f);
++        close(pfd[0]);
++        exit(0);
++    } else {
++        // PARENT
++        close(pfd[0]);
++        char *netBuf = malloc(4096);
++        size_t remaining = fileSize;
++
++        while (remaining > 0) {
++            size_t toRead = (remaining > 4096) ? 4096 : remaining;
++            ssize_t n = read(sockfd, netBuf, toRead);
++            if (n <= 0) break;
++            
++            size_t written = 0;
++            while(written < n) {
++                written += write(pfd[1], netBuf + written, n - written);
++            }
++            remaining -= n;
++        }
++        free(netBuf);
++        close(pfd[1]);
++        close(sockfd);
++        wait(NULL);
++    }
++	return sockfd;
++}
+ 
+ void usage(char const *name)
+ {
+@@ -30,7 +184,11 @@ int main(int argc, char const *argv[])
+ 		return EXIT_FAILURE;
+ 	}
+ 
+-	//To complete
++    if (server) {
++        server_create(port, filename);
++    } else {
++        client_connect(server_address, port, filename);
++    }
+ 
+ 	return 0;
+ }
+diff --git a/usr/host/new.txt b/usr/host/new.txt
+new file mode 100644
+index 0000000..2ea493d
+--- /dev/null
++++ b/usr/host/new.txt
+@@ -0,0 +1 @@
++labo10 flash
+-- 
+GitLab
+
